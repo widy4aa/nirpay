@@ -53,6 +53,9 @@ dependencies:
   sqlite3: ^2.9.4
   safe_device: ^1.3.10
   ndef_record: ^1.4.2
+  fpdart: ^1.2.0
+  dargon2_flutter: ^3.3.0
+  cryptography: ^2.9.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

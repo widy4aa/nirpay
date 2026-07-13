@@ -60,11 +60,7 @@ class _RegisterStep4PageState extends State<RegisterStep4Page> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -81,7 +77,10 @@ class _RegisterStep4PageState extends State<RegisterStep4Page> {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -203,11 +202,7 @@ class _RegisterStep4PageState extends State<RegisterStep4Page> {
         SizedBox(height: 12),
         Text(
           'Arahkan wajah Anda ke dalam bingkai kamera\nuntuk proses verifikasi keamanan.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF7D8C9E),
-            height: 1.5,
-          ),
+          style: TextStyle(fontSize: 14, color: Color(0xFF7D8C9E), height: 1.5),
         ),
       ],
     );
@@ -237,7 +232,10 @@ class _RegisterStep4PageState extends State<RegisterStep4Page> {
                       SizedBox(height: 16),
                       Text(
                         'Menginisialisasi Kamera...',
-                        style: TextStyle(color: Color(0xFF7D8C9E), fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: Color(0xFF7D8C9E),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),

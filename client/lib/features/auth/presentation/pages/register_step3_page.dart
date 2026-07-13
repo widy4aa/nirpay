@@ -10,11 +10,7 @@ class RegisterStep3Page extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -25,7 +21,10 @@ class RegisterStep3Page extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -141,11 +140,7 @@ class RegisterStep3Page extends StatelessWidget {
         SizedBox(height: 12),
         Text(
           'Masukkan Data diri anda untuk melanjutkan sesi,\nData diri harus sesuai dengan Identitas asli anda.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF7D8C9E),
-            height: 1.5,
-          ),
+          style: TextStyle(fontSize: 14, color: Color(0xFF7D8C9E), height: 1.5),
         ),
       ],
     );
@@ -156,13 +151,22 @@ class RegisterStep3Page extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel('Nama Anda'),
-        _buildTextField(hint: 'Masukkan Nama Anda', prefixIcon: Icons.person_outline),
+        _buildTextField(
+          hint: 'Masukkan Nama Anda',
+          prefixIcon: Icons.person_outline,
+        ),
         const SizedBox(height: 20),
         _buildLabel('Username'),
-        _buildTextField(hint: 'Masukkan Nama Anda', prefixIcon: Icons.person_outline),
+        _buildTextField(
+          hint: 'Masukkan Nama Anda',
+          prefixIcon: Icons.person_outline,
+        ),
         const SizedBox(height: 20),
         _buildLabel('Tanggal Lahir'),
-        _buildTextField(hint: 'MM/DD/YYYY', suffixIcon: Icons.calendar_today_outlined),
+        _buildTextField(
+          hint: 'MM/DD/YYYY',
+          suffixIcon: Icons.calendar_today_outlined,
+        ),
         const SizedBox(height: 20),
         _buildLabel('Jenis Kelamin'),
         Row(
@@ -190,7 +194,11 @@ class RegisterStep3Page extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({required String hint, IconData? prefixIcon, IconData? suffixIcon}) {
+  Widget _buildTextField({
+    required String hint,
+    IconData? prefixIcon,
+    IconData? suffixIcon,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -201,10 +209,17 @@ class RegisterStep3Page extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFF7D8C9E), fontSize: 14),
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFF7D8C9E), size: 20) : null,
-          suffixIcon: suffixIcon != null ? Icon(suffixIcon, color: const Color(0xFF7D8C9E), size: 20) : null,
+          prefixIcon: prefixIcon != null
+              ? Icon(prefixIcon, color: const Color(0xFF7D8C9E), size: 20)
+              : null,
+          suffixIcon: suffixIcon != null
+              ? Icon(suffixIcon, color: const Color(0xFF7D8C9E), size: 20)
+              : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 16,
+          ),
         ),
       ),
     );
@@ -216,9 +231,7 @@ class RegisterStep3Page extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         backgroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide(
           color: isSelected ? const Color(0xFF009CFF) : const Color(0xFFE2E6EE),
           width: isSelected ? 1.5 : 1.0,

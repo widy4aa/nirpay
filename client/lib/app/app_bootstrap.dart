@@ -13,7 +13,11 @@ Future<void> bootstrap() async {
 
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    logger.e('FlutterError', error: details.exception, stackTrace: details.stack);
+    logger.e(
+      'FlutterError',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
   };
 
   runZonedGuarded(

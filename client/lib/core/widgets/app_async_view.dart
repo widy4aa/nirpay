@@ -28,10 +28,8 @@ class AppAsyncView<T> extends StatelessWidget {
         return data(result);
       },
       loading: () => const LoadingState(),
-      error: (error, stackTrace) => ErrorState(
-        message: error.toString(),
-        onRetry: onRetry,
-      ),
+      error: (error, stackTrace) =>
+          ErrorState(message: error.toString(), onRetry: onRetry),
     );
   }
 }

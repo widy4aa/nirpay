@@ -10,11 +10,7 @@ class RegisterStep1Page extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -31,7 +27,10 @@ class RegisterStep1Page extends StatelessWidget {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -152,11 +151,7 @@ class RegisterStep1Page extends StatelessWidget {
         SizedBox(height: 12),
         Text(
           'Masukkan alamat email anda dan no telpon anda\nuntuk melanjutkan sesi Registrasi.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF7D8C9E),
-            height: 1.5,
-          ),
+          style: TextStyle(fontSize: 14, color: Color(0xFF7D8C9E), height: 1.5),
         ),
       ],
     );
@@ -175,10 +170,7 @@ class RegisterStep1Page extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        _buildTextField(
-          hint: 'Masukan Email Anda',
-          icon: Icons.email_outlined,
-        ),
+        _buildTextField(hint: 'Masukan Email Anda', icon: Icons.email_outlined),
         const SizedBox(height: 24),
         const Text(
           'Nomor Ponsel',

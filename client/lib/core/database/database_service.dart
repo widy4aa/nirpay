@@ -20,7 +20,7 @@ class DatabaseService {
         final random = Random.secure();
         final values = List<int>.generate(32, (i) => random.nextInt(256));
         key = base64UrlEncode(values);
-        
+
         // Save to Hardware-backed Keystore (TEE)
         await _storage.write(key: _keyName, value: key);
         debugPrint('Generated new AES-256 key and saved to TEE.');
@@ -38,26 +38,31 @@ class DatabaseService {
   static Future<bool> checkDatabaseStatus() async {
     try {
       final key = await _getOrGenerateEncryptionKey();
-      
+
       final docDir = await getApplicationDocumentsDirectory();
       final dbFile = File('${docDir.path}/secure_wallet.db');
-      
+
       // Open SQLite database (which is backed by SQLCipher via sqlcipher_flutter_libs)
       final db = sqlite3.open(dbFile.path);
-      
+
       // Apply the AES-256 key for encryption/decryption
       db.execute("PRAGMA key = '$key';");
-      
+
       // Test the encryption by writing and reading
-      db.execute('CREATE TABLE IF NOT EXISTS secure_test (id INTEGER PRIMARY KEY, status TEXT)');
-      db.execute("INSERT OR REPLACE INTO secure_test (id, status) VALUES (1, 'active')");
-      
+      db.execute(
+        'CREATE TABLE IF NOT EXISTS secure_test (id INTEGER PRIMARY KEY, status TEXT)',
+      );
+      db.execute(
+        "INSERT OR REPLACE INTO secure_test (id, status) VALUES (1, 'active')",
+      );
+
       final result = db.select('SELECT status FROM secure_test WHERE id = 1');
-      
-      final isDecrypted = result.isNotEmpty && result.first['status'] == 'active';
-      
+
+      final isDecrypted =
+          result.isNotEmpty && result.first['status'] == 'active';
+
       db.dispose(); // Close database connection safely
-      
+
       return isDecrypted;
     } catch (e) {
       debugPrint('Secure database check failed: $e');

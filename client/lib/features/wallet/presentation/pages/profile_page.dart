@@ -10,11 +10,7 @@ class ProfilePage extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -24,7 +20,10 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 20.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -135,10 +134,7 @@ class ProfilePage extends StatelessWidget {
             title: 'Informasi Pribadi',
           ),
           const Divider(height: 1, thickness: 0.5, color: Color(0xFFE2E6EE)),
-          _buildListTile(
-            icon: Icons.lock_outline_rounded,
-            title: 'Masuk PIN',
-          ),
+          _buildListTile(icon: Icons.lock_outline_rounded, title: 'Masuk PIN'),
           const Divider(height: 1, thickness: 0.5, color: Color(0xFFE2E6EE)),
           _buildListTile(
             icon: Icons.shield_outlined,
@@ -181,32 +177,36 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile({required IconData icon, required String title, VoidCallback? onTap}) {
+  Widget _buildListTile({
+    required IconData icon,
+    required String title,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF2F2F38), size: 20),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF2F2F38),
+        child: Row(
+          children: [
+            Icon(icon, color: const Color(0xFF2F2F38), size: 20),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2F2F38),
+                ),
               ),
             ),
-          ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Colors.grey,
-            size: 20,
-          ),
-        ],
-      ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.grey,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -218,9 +218,7 @@ class ProfilePage extends StatelessWidget {
         foregroundColor: const Color(0xFFD14B5A),
         side: const BorderSide(color: Color(0xFFD14B5A), width: 1.5),
         padding: const EdgeInsets.symmetric(vertical: 18),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -229,10 +227,7 @@ class ProfilePage extends StatelessWidget {
           SizedBox(width: 8),
           Text(
             'Logout from Nirpay',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ],
       ),

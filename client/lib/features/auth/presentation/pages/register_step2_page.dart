@@ -10,11 +10,7 @@ class RegisterStep2Page extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -31,7 +27,10 @@ class RegisterStep2Page extends StatelessWidget {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -158,7 +157,10 @@ class RegisterStep2Page extends StatelessWidget {
               height: 1.5,
             ),
             children: [
-              TextSpan(text: 'Masukkan kode OTP yang telah kami kirimkan ke\nalamat email anda. '),
+              TextSpan(
+                text:
+                    'Masukkan kode OTP yang telah kami kirimkan ke\nalamat email anda. ',
+              ),
               TextSpan(
                 text: 'Kirim lewat no telpon',
                 style: TextStyle(

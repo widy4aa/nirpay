@@ -17,11 +17,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFF4F7FB),
-            Colors.white,
-            Color(0xFFC7F4ED),
-          ],
+          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
           stops: [0.0, 0.4, 1.0],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -41,9 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 const SizedBox(height: 16),
                 _buildFilterChips(),
                 const SizedBox(height: 24),
-                Expanded(
-                  child: _buildTransactionList(),
-                ),
+                Expanded(child: _buildTransactionList()),
               ],
             ),
           ),
@@ -247,10 +241,7 @@ class _HistoryPageState extends State<HistoryPage> {
         Container(
           width: 48,
           height: 48,
-          decoration: BoxDecoration(
-            color: avatarBg,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: avatarBg, shape: BoxShape.circle),
           child: Center(
             child: Text(
               initials,
@@ -278,10 +269,7 @@ class _HistoryPageState extends State<HistoryPage> {
               const SizedBox(height: 4),
               Text(
                 date,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -291,7 +279,9 @@ class _HistoryPageState extends State<HistoryPage> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w800,
-            color: isNegative ? const Color(0xFFD14B5A) : const Color(0xFF1F8062),
+            color: isNegative
+                ? const Color(0xFFD14B5A)
+                : const Color(0xFF1F8062),
           ),
         ),
       ],
