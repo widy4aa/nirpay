@@ -13,10 +13,10 @@ class DatabaseService {
 
   Future<String> getDbEncryptionKey() async {
     final logger = _ref.read(appLoggerProvider);
-    
+
     try {
       final existingKey = await _storage.read('db_encryption_key');
-      
+
       if (existingKey != null) {
         return existingKey;
       }
@@ -26,7 +26,7 @@ class DatabaseService {
       final secretKey = await algorithm.newSecretKey();
       final keyBytes = await secretKey.extractBytes();
       final newKeyBase64 = base64Encode(keyBytes);
-      
+
       await _storage.write('db_encryption_key', newKeyBase64);
       return newKeyBase64;
     } catch (e) {
@@ -49,7 +49,7 @@ final databaseServiceProvider = Provider<DatabaseService>((ref) {
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   // In a real app, you'd wait for this asynchronously during app init
   // For now, since Drift needs synchronous init, we could pass a dummy key
-  // or use a FutureProvider. We'll use a placeholder key here to satisfy sync requirement, 
+  // or use a FutureProvider. We'll use a placeholder key here to satisfy sync requirement,
   // but ideally we should initialize it during bootstrap.
   return AppDatabase(encryptionKey: 'temp_key_until_initialized');
 });

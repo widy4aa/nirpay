@@ -30,10 +30,13 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } on DioException catch (e) {
       _logger.e('[Auth] Register failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Register failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ?? e.message ?? 'Register failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Register cache/parsing error', error: e);
       return Left(CacheFailure(message: e.toString()));
@@ -54,10 +57,12 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(tokens);
     } on DioException catch (e) {
       _logger.e('[Auth] Login failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Login failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      return Left(
+        ServerFailure(
+          message: e.response?.data?['message'] ?? e.message ?? 'Login failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Login cache/parsing error', error: e);
       return Left(CacheFailure(message: e.toString()));
@@ -65,17 +70,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> sendOtp(String email, String phone, String type) async {
+  Future<Either<Failure, Map<String, dynamic>>> sendOtp(
+    String email,
+    String phone,
+    String type,
+  ) async {
     try {
       _logger.d('[Auth] Sending OTP to $email');
       final data = await _remoteDatasource.sendOtp(email, phone, type);
       return Right(data);
     } on DioException catch (e) {
       _logger.e('[Auth] Send OTP failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Send OTP failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ?? e.message ?? 'Send OTP failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Send OTP error', error: e);
       return Left(CacheFailure(message: e.toString()));
@@ -90,10 +102,13 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(data['success'] == true);
     } on DioException catch (e) {
       _logger.e('[Auth] Verify OTP failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Verify OTP failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ?? e.message ?? 'Verify OTP failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Verify OTP error', error: e);
       return Left(CacheFailure(message: e.toString()));
@@ -101,17 +116,31 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> checkAvailability(String email, String phone) async {
+  Future<Either<Failure, bool>> checkAvailability(
+    String email,
+    String phone,
+  ) async {
     try {
       _logger.d('[Auth] Checking availability for $email');
       final data = await _remoteDatasource.checkAvailability(email, phone);
-      return Right(data['emailAvailable'] == true && data['phoneAvailable'] == true);
+      return Right(
+        data['emailAvailable'] == true && data['phoneAvailable'] == true,
+      );
     } on DioException catch (e) {
-      _logger.e('[Auth] Check availability failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Check availability failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      _logger.e(
+        '[Auth] Check availability failed',
+        error: e,
+        stackTrace: e.stackTrace,
+      );
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ??
+              e.message ??
+              'Check availability failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Check availability error', error: e);
       return Left(CacheFailure(message: e.toString()));
@@ -125,11 +154,20 @@ class AuthRepositoryImpl implements AuthRepository {
       final data = await _remoteDatasource.checkUsername(username);
       return Right(data['available'] == true);
     } on DioException catch (e) {
-      _logger.e('[Auth] Check username failed', error: e, stackTrace: e.stackTrace);
-      return Left(ServerFailure(
-        message: e.response?.data?['message'] ?? e.message ?? 'Check username failed',
-        code: e.response?.statusCode?.toString(),
-      ));
+      _logger.e(
+        '[Auth] Check username failed',
+        error: e,
+        stackTrace: e.stackTrace,
+      );
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ??
+              e.message ??
+              'Check username failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       _logger.e('[Auth] Check username error', error: e);
       return Left(CacheFailure(message: e.toString()));

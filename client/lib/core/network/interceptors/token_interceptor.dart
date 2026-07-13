@@ -12,7 +12,7 @@ class TokenInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       _logger.d('[Network] 401 Unauthorized, attempting to refresh token');
-      
+
       try {
         final refreshToken = await _storage.read('refresh_token');
         if (refreshToken != null) {

@@ -16,7 +16,11 @@ class DioClient {
 
   final Dio dio;
 
-  factory DioClient.create(AppConfig config, Logger logger, SecureStorageService storage) {
+  factory DioClient.create(
+    AppConfig config,
+    Logger logger,
+    SecureStorageService storage,
+  ) {
     final dio = Dio(
       BaseOptions(
         baseUrl: config.apiBaseUrl,
@@ -37,7 +41,11 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (error, handler) {
-          logger.e('[Network] Dio error', error: error, stackTrace: error.stackTrace);
+          logger.e(
+            '[Network] Dio error',
+            error: error,
+            stackTrace: error.stackTrace,
+          );
           handler.next(error);
         },
       ),

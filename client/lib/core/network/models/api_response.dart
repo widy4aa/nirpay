@@ -5,15 +5,11 @@ part 'api_response.g.dart';
 
 @Freezed(genericArgumentFactories: true)
 class ApiResponse<T> with _$ApiResponse<T> {
-  const factory ApiResponse({
-    required bool success,
-    String? message,
-    T? data,
-  }) = _ApiResponse;
+  const factory ApiResponse({required bool success, String? message, T? data}) =
+      _ApiResponse;
 
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) =>
-      _$ApiResponseFromJson(json, fromJsonT);
+  ) => _$ApiResponseFromJson(json, fromJsonT);
 }

@@ -20,13 +20,13 @@ class RegisterParams {
   });
 
   Map<String, dynamic> toJson() => {
-        'email': email,
-        'phone': phone,
-        'username': username,
-        'fullName': fullName,
-        'pin': pin,
-        'publicKeyB64': publicKeyB64,
-      };
+    'email': email,
+    'phone': phone,
+    'username': username,
+    'fullName': fullName,
+    'pin': pin,
+    'publicKeyB64': publicKeyB64,
+  };
 }
 
 class AuthTokens {
@@ -44,7 +44,11 @@ class AuthTokens {
 abstract class AuthRepository {
   Future<Either<Failure, User>> register(RegisterParams params);
   Future<Either<Failure, AuthTokens>> login(String email, String pin);
-  Future<Either<Failure, Map<String, dynamic>>> sendOtp(String email, String phone, String type);
+  Future<Either<Failure, Map<String, dynamic>>> sendOtp(
+    String email,
+    String phone,
+    String type,
+  );
   Future<Either<Failure, bool>> verifyOtp(String otpId, String otpCode);
   Future<Either<Failure, bool>> checkAvailability(String email, String phone);
   Future<Either<Failure, bool>> checkUsername(String username);
