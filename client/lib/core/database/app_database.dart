@@ -71,7 +71,9 @@ LazyDatabase _openConnection() {
 
 @DriftDatabase(tables: [Users, WalletBalances, Transactions])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  final String encryptionKey;
+
+  AppDatabase({required this.encryptionKey}) : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -82,6 +84,7 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
     },
     beforeOpen: (details) async {
+      await customStatement("PRAGMA key = '$encryptionKey'");
       await customStatement('PRAGMA journal_mode=WAL');
       await customStatement('PRAGMA foreign_keys=ON');
     },
