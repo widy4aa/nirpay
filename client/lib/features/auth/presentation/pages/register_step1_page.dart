@@ -1,20 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nirpay/core/router/app_router.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_gradients.dart';
+import '../controllers/auth_controller.dart';
+import '../providers/registration_form_provider.dart';
 
-class RegisterStep1Page extends StatelessWidget {
+class RegisterStep1Page extends ConsumerStatefulWidget {
   const RegisterStep1Page({super.key});
 
   @override
+  ConsumerState<RegisterStep1Page> createState() => _RegisterStep1PageState();
+}
+
+class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _onNext() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    try {
+      await ref.read(authControllerProvider.notifier).checkAvailability(email, phone);
+      
+      ref.read(registrationFormProvider.notifier).update((state) {
+        return state.copyWith(email: email, phone: phone);
+      });
+      
+      if (mounted) {
+        context.pushNamed(AppRouteNames.registerStep2);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
-          stops: [0.0, 0.4, 1.0],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        gradient: AppGradients.background,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -31,18 +75,21 @@ class RegisterStep1Page extends StatelessWidget {
                         horizontal: 24.0,
                         vertical: 16.0,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildProgressBar(),
-                          const SizedBox(height: 32),
-                          _buildHeader(),
-                          const SizedBox(height: 32),
-                          _buildForm(),
-                          const Spacer(),
-                          _buildNextButton(context),
-                          const SizedBox(height: 24),
-                        ],
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildProgressBar(),
+                            const SizedBox(height: 32),
+                            _buildHeader(),
+                            const SizedBox(height: 32),
+                            _buildForm(),
+                            const Spacer(),
+                            _buildNextButton(context, isLoading),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -61,7 +108,7 @@ class RegisterStep1Page extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1B1E28)),
+        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
         onPressed: () => context.pop(),
       ),
       title: const Text(
@@ -69,27 +116,9 @@ class RegisterStep1Page extends StatelessWidget {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: Color(0xFF1B1E28),
+          color: AppColors.textPrimary,
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black54, width: 1.5),
-            ),
-            child: const Icon(
-              Icons.question_mark_rounded,
-              color: Colors.black87,
-              size: 16,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-      ],
     );
   }
 
@@ -100,7 +129,7 @@ class RegisterStep1Page extends StatelessWidget {
         const Text(
           'Langkah 1 dari 5',
           style: TextStyle(
-            color: Color(0xFF009CFF),
+            color: AppColors.primary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
@@ -113,7 +142,7 @@ class RegisterStep1Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF009CFF),
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -124,7 +153,7 @@ class RegisterStep1Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE2E6EE),
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -144,14 +173,14 @@ class RegisterStep1Page extends StatelessWidget {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF1E1E24),
+            color: AppColors.textPrimary,
             height: 1.3,
           ),
         ),
         SizedBox(height: 12),
         Text(
           'Masukkan alamat email anda dan no telpon anda\nuntuk melanjutkan sesi Registrasi.',
-          style: TextStyle(fontSize: 14, color: Color(0xFF7D8C9E), height: 1.5),
+          style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
         ),
       ],
     );
@@ -166,75 +195,114 @@ class RegisterStep1Page extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E1E24),
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        _buildTextField(hint: 'Masukan Email Anda', icon: Icons.email_outlined),
+        _buildTextField(
+          controller: _emailController,
+          hint: 'Masukan Email Anda',
+          icon: Icons.email_outlined,
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || value.isEmpty) return 'Email tidak boleh kosong';
+            if (!value.contains('@')) return 'Format email tidak valid';
+            return null;
+          },
+        ),
         const SizedBox(height: 24),
         const Text(
           'Nomor Ponsel',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E1E24),
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
         _buildTextField(
+          controller: _phoneController,
           hint: '+62  12345678',
           icon: Icons.phone_android_rounded,
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.isEmpty) return 'No telepon tidak boleh kosong';
+            return null;
+          },
         ),
       ],
     );
   }
 
-  Widget _buildTextField({required String hint, required IconData icon}) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E6EE)),
       ),
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: Color(0xFF7D8C9E), fontSize: 14),
-          prefixIcon: Icon(icon, color: const Color(0xFF7D8C9E), size: 20),
-          border: InputBorder.none,
+          hintStyle: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.error),
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
     );
   }
 
-  Widget _buildNextButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => context.pushNamed(AppRouteNames.registerStep2),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF009CFF),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 4,
-          shadowColor: const Color(0xFF009CFF).withValues(alpha: 0.3),
+  Widget _buildNextButton(BuildContext context, bool isLoading) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : _onNext,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Selanjutnya',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded, size: 20),
-          ],
-        ),
+        elevation: 0,
       ),
+      child: isLoading 
+          ? const SizedBox(
+              height: 20, width: 20, 
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+            )
+          : const Text(
+              'Lanjutkan',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
     );
   }
 }

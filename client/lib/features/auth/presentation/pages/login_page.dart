@@ -1,248 +1,361 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nirpay/core/router/app_router.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_gradients.dart';
+import '../controllers/auth_controller.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String _pin = '';
+  bool _isEmailStep = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _onEmailSubmit() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isEmailStep = false;
+      });
+    }
+  }
+
+  void _onNumberTap(String number) {
+    if (_pin.length < 6) {
+      setState(() {
+        _pin += number;
+      });
+      if (_pin.length == 6) {
+        _onLogin();
+      }
+    }
+  }
+
+  void _onDeleteTap() {
+    if (_pin.isNotEmpty) {
+      setState(() {
+        _pin = _pin.substring(0, _pin.length - 1);
+      });
+    }
+  }
+
+  void _onLogin() async {
+    try {
+      await ref.read(authControllerProvider.notifier).login(
+        _emailController.text.trim(),
+        _pin,
+      );
+      if (mounted) {
+        context.goNamed(AppRouteNames.wallet);
+      }
+    } catch (e) {
+      setState(() {
+        _pin = '';
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
-          stops: [0.0, 0.4, 1.0],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        gradient: AppGradients.background,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: _isEmailStep ? null : _buildAppBar(context),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 40.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 60),
-                _buildHeader(),
-                const SizedBox(height: 40),
-                _buildForm(context),
-                const SizedBox(height: 40),
-                _buildFooter(context),
-              ],
-            ),
-          ),
+          child: _isEmailStep ? _buildEmailStep() : _buildPinStep(isLoading),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E1E24),
-              height: 1.3,
-            ),
-            children: [
-              TextSpan(text: 'Selamat Datang di\n'),
-              TextSpan(text: 'Nir'),
-              TextSpan(
-                text: 'Pay',
-                style: TextStyle(color: Color(0xFF238AED)),
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+        onPressed: () {
+          setState(() {
+            _isEmailStep = true;
+            _pin = '';
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmailStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 48),
+            _buildLogo(),
+            const SizedBox(height: 48),
+            const Text(
+              'Selamat Datang Kembali!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
               ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Masukkan email Anda untuk melanjutkan',
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 32),
+            _buildEmailField(),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _onEmailSubmit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Lanjutkan',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+            ),
+            const Spacer(),
+            _buildRegisterLink(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPinStep(bool isLoading) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Masukkan PIN Anda',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Masukkan PIN 6-digit untuk\n${_emailController.text}',
+                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
+              if (isLoading)
+                const CircularProgressIndicator()
+              else
+                _buildPinDisplay(),
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        const Text(
-          'Selamat Datang di NirPay. Silahkan Login Jika\nAnda Sudah Memiliki Akun',
-          style: TextStyle(fontSize: 14, color: Color(0xFF4A4A54), height: 1.5),
-        ),
+        const Spacer(),
+        _buildNumberPad(),
+        const SizedBox(height: 32),
       ],
     );
   }
 
-  Widget _buildForm(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        _buildTextField(
-          hint: 'Email atau Nomor Ponsel',
-          icon: Icons.email_outlined,
+  Widget _buildLogo() {
+    return Center(
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
         ),
-        const SizedBox(height: 16),
-        _buildTextField(
-          hint: 'Kata Sandi',
-          icon: Icons.lock_outline_rounded,
-          isPassword: true,
+        child: const Icon(
+          Icons.account_balance_wallet_rounded,
+          size: 40,
+          color: AppColors.primary,
         ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () {},
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: const Text(
-            'Lupa kata sandi?',
-            style: TextStyle(
-              color: Color(0xFF7D8C9E),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => context.goNamed(AppRouteNames.wallet),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF009CFF),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 4,
-              shadowColor: const Color(0xFF009CFF).withValues(alpha: 0.3),
-            ),
-            child: const Text(
-              'Masuk',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        _buildDivider(),
-        const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              side: const BorderSide(color: Color(0xFFE2E6EE)),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Replace with actual Google icon asset if available
-                Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 28),
-                SizedBox(width: 8),
-                Text(
-                  'Masuk dengan Google',
-                  style: TextStyle(
-                    color: Color(0xFF4A4A54),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildTextField({
-    required String hint,
-    required IconData icon,
-    bool isPassword = false,
-  }) {
+  Widget _buildEmailField() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E6EE)),
       ),
-      child: TextField(
-        obscureText: isPassword,
+      child: TextFormField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Email tidak boleh kosong';
+          if (!value.contains('@')) return 'Format email tidak valid';
+          return null;
+        },
         decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: Color(0xFF7D8C9E), fontSize: 14),
-          prefixIcon: Icon(icon, color: const Color(0xFF7D8C9E), size: 20),
-          suffixIcon: isPassword
-              ? const Icon(
-                  Icons.visibility_outlined,
-                  color: Color(0xFF7D8C9E),
-                  size: 20,
-                )
-              : null,
-          border: InputBorder.none,
+          hintText: 'Email Anda',
+          hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+          prefixIcon: const Icon(Icons.email_outlined, color: AppColors.primary, size: 20),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.error),
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
     );
   }
 
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.grey.withValues(alpha: 0.3),
-            thickness: 1,
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'ATAU',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF7D8C9E),
-              letterSpacing: 1.5,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.grey.withValues(alpha: 0.3),
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildRegisterLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
           'Belum punya akun? ',
-          style: TextStyle(color: Color(0xFF4A4A54), fontSize: 14),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
         GestureDetector(
           onTap: () => context.pushNamed(AppRouteNames.registerStep1),
           child: const Text(
-            'Daftar Sekarang',
+            'Daftar',
             style: TextStyle(
-              color: Color(0xFF009CFF),
+              color: AppColors.primary,
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPinDisplay() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        6,
+        (index) => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: index < _pin.length ? AppColors.primary : AppColors.border,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNumberPad() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        children: [
+          for (var i = 0; i < 3; i++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                for (var j = 1; j <= 3; j++)
+                  _buildNumberButton((i * 3 + j).toString()),
+              ],
+            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const SizedBox(width: 80, height: 80),
+              _buildNumberButton('0'),
+              _buildDeleteButton(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNumberButton(String number) {
+    return InkWell(
+      onTap: () => _onNumberTap(number),
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        width: 80,
+        height: 80,
+        alignment: Alignment.center,
+        child: Text(
+          number,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteButton() {
+    return InkWell(
+      onTap: _onDeleteTap,
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        width: 80,
+        height: 80,
+        alignment: Alignment.center,
+        child: const Icon(
+          Icons.backspace_outlined,
+          size: 28,
+          color: AppColors.textPrimary,
+        ),
+      ),
     );
   }
 }

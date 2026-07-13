@@ -1,20 +1,118 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nirpay/core/router/app_router.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_gradients.dart';
+import '../controllers/auth_controller.dart';
+import '../providers/registration_form_provider.dart';
 
-class RegisterStep2Page extends StatelessWidget {
+class RegisterStep2Page extends ConsumerStatefulWidget {
   const RegisterStep2Page({super.key});
 
   @override
+  ConsumerState<RegisterStep2Page> createState() => _RegisterStep2PageState();
+}
+
+class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
+  final List<TextEditingController> _controllers = List.generate(
+    6,
+    (index) => TextEditingController(),
+  );
+  final List<FocusNode> _focusNodes = List.generate(
+    6,
+    (index) => FocusNode(),
+  );
+  int _resendTimer = 30;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+    
+    // Automatically trigger OTP send on page load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sendOtp();
+    });
+  }
+
+  Future<void> _sendOtp() async {
+    final state = ref.read(registrationFormProvider);
+    try {
+      final otpId = await ref.read(authControllerProvider.notifier).sendOtp(state.email, state.phone);
+      ref.read(registrationFormProvider.notifier).update((s) => s.copyWith(otpId: otpId));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+        );
+      }
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_resendTimer == 0) {
+        timer.cancel();
+      } else {
+        if (mounted) {
+          setState(() {
+            _resendTimer--;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _onNext() async {
+    final code = _controllers.map((c) => c.text).join();
+    if (code.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Masukkan 6 digit OTP'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+
+    final formState = ref.read(registrationFormProvider);
+    final otpId = formState.otpId;
+
+    try {
+      await ref.read(authControllerProvider.notifier).verifyOtp(otpId, code);
+      if (mounted) {
+        context.pushNamed(AppRouteNames.registerStep3);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
+    final formState = ref.watch(registrationFormProvider);
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
-          stops: [0.0, 0.4, 1.0],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        gradient: AppGradients.background,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -36,11 +134,13 @@ class RegisterStep2Page extends StatelessWidget {
                         children: [
                           _buildProgressBar(),
                           const SizedBox(height: 32),
-                          _buildHeader(),
+                          _buildHeader(formState.email),
                           const SizedBox(height: 32),
-                          _buildOTPInput(),
+                          _buildOtpForm(),
                           const Spacer(),
-                          _buildNextButton(context),
+                          _buildResendSection(),
+                          const SizedBox(height: 24),
+                          _buildNextButton(context, isLoading),
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -61,35 +161,17 @@ class RegisterStep2Page extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1B1E28)),
+        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
         onPressed: () => context.pop(),
       ),
       title: const Text(
-        'Kode OTP',
+        'Registrasi',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: Color(0xFF1B1E28),
+          color: AppColors.textPrimary,
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black54, width: 1.5),
-            ),
-            child: const Icon(
-              Icons.question_mark_rounded,
-              color: Colors.black87,
-              size: 16,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-      ],
     );
   }
 
@@ -100,7 +182,7 @@ class RegisterStep2Page extends StatelessWidget {
         const Text(
           'Langkah 2 dari 5',
           style: TextStyle(
-            color: Color(0xFF009CFF),
+            color: AppColors.primary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
@@ -113,7 +195,7 @@ class RegisterStep2Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF009CFF),
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -124,7 +206,7 @@ class RegisterStep2Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE2E6EE),
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -135,37 +217,31 @@ class RegisterStep2Page extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(String email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Masukkan Kode OTP',
+          'Masukkan Kode OTP\nAnda Disini',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF1E1E24),
+            color: AppColors.textPrimary,
             height: 1.3,
           ),
         ),
         const SizedBox(height: 12),
         RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF7D8C9E),
-              height: 1.5,
-            ),
+          text: TextSpan(
+            style: const TextStyle(
+                fontSize: 14, color: AppColors.textSecondary, height: 1.5),
             children: [
+              const TextSpan(text: 'Masukkan 6 digit kode OTP yang kami\nkirimkan ke '),
               TextSpan(
-                text:
-                    'Masukkan kode OTP yang telah kami kirimkan ke\nalamat email anda. ',
-              ),
-              TextSpan(
-                text: 'Kirim lewat no telpon',
-                style: TextStyle(
-                  color: Color(0xFF009CFF),
-                  fontWeight: FontWeight.w600,
+                text: email.isNotEmpty ? email : 'email anda',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -175,61 +251,116 @@ class RegisterStep2Page extends StatelessWidget {
     );
   }
 
-  Widget _buildOTPInput() {
+  Widget _buildOtpForm() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(5, (index) => _buildOTPBox()),
-    );
-  }
-
-  Widget _buildOTPBox() {
-    return Container(
-      width: 56,
-      height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E6EE)),
-      ),
-      child: const TextField(
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNextButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => context.pushNamed(AppRouteNames.registerStep3),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF009CFF),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 4,
-          shadowColor: const Color(0xFF009CFF).withValues(alpha: 0.3),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Selanjutnya',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+      children: List.generate(
+        6,
+        (index) => SizedBox(
+          width: 45,
+          child: TextField(
+            controller: _controllers[index],
+            focusNode: _focusNodes[index],
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            maxLength: 1,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
             ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded, size: 20),
-          ],
+            decoration: InputDecoration(
+              counterText: '',
+              filled: true,
+              fillColor: AppColors.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+            ),
+            onChanged: (value) {
+              if (value.isNotEmpty && index < 5) {
+                _focusNodes[index + 1].requestFocus();
+              } else if (value.isEmpty && index > 0) {
+                _focusNodes[index - 1].requestFocus();
+              }
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildResendSection() {
+    return Column(
+      children: [
+        const Text(
+          'Belum menerima kode OTP?',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _resendTimer == 0
+              ? () {
+                  setState(() {
+                    _resendTimer = 30;
+                  });
+                  _startTimer();
+                  _sendOtp();
+                }
+              : null,
+          child: Text(
+            _resendTimer > 0
+                ? 'Kirim Ulang ($_resendTimer s)'
+                : 'Kirim Ulang Kode OTP',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: _resendTimer > 0
+                  ? AppColors.textSecondary
+                  : AppColors.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNextButton(BuildContext context, bool isLoading) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : _onNext,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 0,
+      ),
+      child: isLoading 
+          ? const SizedBox(
+              height: 20, width: 20, 
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+            )
+          : const Text(
+              'Lanjutkan',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
     );
   }
 }

@@ -1,43 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nirpay/core/router/app_router.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_gradients.dart';
+import '../controllers/auth_controller.dart';
+import '../providers/registration_form_provider.dart';
 
-class RegisterStep3Page extends StatelessWidget {
+class RegisterStep3Page extends ConsumerStatefulWidget {
   const RegisterStep3Page({super.key});
 
   @override
+  ConsumerState<RegisterStep3Page> createState() => _RegisterStep3PageState();
+}
+
+class _RegisterStep3PageState extends ConsumerState<RegisterStep3Page> {
+  final _usernameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    super.dispose();
+  }
+
+  void _onNext() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final username = _usernameController.text.trim();
+
+    try {
+      await ref.read(authControllerProvider.notifier).checkUsername(username);
+      
+      ref.read(registrationFormProvider.notifier).update((state) {
+        return state.copyWith(username: username);
+      });
+      
+      if (mounted) {
+        context.pushNamed(AppRouteNames.registerStep4);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final isLoading = authState.isLoading;
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFF4F7FB), Colors.white, Color(0xFFC7F4ED)],
-          stops: [0.0, 0.4, 1.0],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        gradient: AppGradients.background,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: _buildAppBar(context),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildProgressBar(),
-                const SizedBox(height: 32),
-                _buildHeader(),
-                const SizedBox(height: 32),
-                _buildForm(),
-                const SizedBox(height: 40),
-                _buildNextButton(context),
-                const SizedBox(height: 24),
-              ],
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16.0,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildProgressBar(),
+                            const SizedBox(height: 32),
+                            _buildHeader(),
+                            const SizedBox(height: 32),
+                            _buildForm(),
+                            const Spacer(),
+                            _buildNextButton(context, isLoading),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -50,35 +105,17 @@ class RegisterStep3Page extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1B1E28)),
+        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
         onPressed: () => context.pop(),
       ),
       title: const Text(
-        'Data Diri',
+        'Registrasi',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: Color(0xFF1B1E28),
+          color: AppColors.textPrimary,
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black54, width: 1.5),
-            ),
-            child: const Icon(
-              Icons.question_mark_rounded,
-              color: Colors.black87,
-              size: 16,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-      ],
     );
   }
 
@@ -89,7 +126,7 @@ class RegisterStep3Page extends StatelessWidget {
         const Text(
           'Langkah 3 dari 5',
           style: TextStyle(
-            color: Color(0xFF009CFF),
+            color: AppColors.primary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
@@ -102,7 +139,7 @@ class RegisterStep3Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF009CFF),
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -113,7 +150,7 @@ class RegisterStep3Page extends StatelessWidget {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE2E6EE),
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -129,18 +166,18 @@ class RegisterStep3Page extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Masukkan Data Diri Anda',
+          'Buat Username Anda',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF1E1E24),
+            color: AppColors.textPrimary,
             height: 1.3,
           ),
         ),
         SizedBox(height: 12),
         Text(
-          'Masukkan Data diri anda untuk melanjutkan sesi,\nData diri harus sesuai dengan Identitas asli anda.',
-          style: TextStyle(fontSize: 14, color: Color(0xFF7D8C9E), height: 1.5),
+          'Pilih nama pengguna unik yang akan\nmerepresentasikan Anda di Nirpay.',
+          style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
         ),
       ],
     );
@@ -150,130 +187,85 @@ class RegisterStep3Page extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel('Nama Anda'),
-        _buildTextField(
-          hint: 'Masukkan Nama Anda',
-          prefixIcon: Icons.person_outline,
+        const Text(
+          'Username',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
         ),
-        const SizedBox(height: 20),
-        _buildLabel('Username'),
-        _buildTextField(
-          hint: 'Masukkan Nama Anda',
-          prefixIcon: Icons.person_outline,
-        ),
-        const SizedBox(height: 20),
-        _buildLabel('Tanggal Lahir'),
-        _buildTextField(
-          hint: 'MM/DD/YYYY',
-          suffixIcon: Icons.calendar_today_outlined,
-        ),
-        const SizedBox(height: 20),
-        _buildLabel('Jenis Kelamin'),
-        Row(
-          children: [
-            Expanded(child: _buildGenderButton('Laki-laki', true)),
-            const SizedBox(width: 12),
-            Expanded(child: _buildGenderButton('Perempuan', false)),
-          ],
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: TextFormField(
+            controller: _usernameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Username tidak boleh kosong';
+              if (value.length < 3) return 'Minimal 3 karakter';
+              if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+                return 'Hanya boleh huruf, angka, dan underscore';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              hintText: 'Contoh: nirpay_user',
+              hintStyle: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+              prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.primary, size: 20),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.error),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF1E1E24),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String hint,
-    IconData? prefixIcon,
-    IconData? suffixIcon,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E6EE)),
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: Color(0xFF7D8C9E), fontSize: 14),
-          prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon, color: const Color(0xFF7D8C9E), size: 20)
-              : null,
-          suffixIcon: suffixIcon != null
-              ? Icon(suffixIcon, color: const Color(0xFF7D8C9E), size: 20)
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGenderButton(String label, bool isSelected) {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
+  Widget _buildNextButton(BuildContext context, bool isLoading) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : _onNext,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        side: BorderSide(
-          color: isSelected ? const Color(0xFF009CFF) : const Color(0xFFE2E6EE),
-          width: isSelected ? 1.5 : 1.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
+        elevation: 0,
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? const Color(0xFF009CFF) : const Color(0xFF4A4A54),
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNextButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => context.pushNamed(AppRouteNames.registerStep4),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF009CFF),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 4,
-          shadowColor: const Color(0xFF009CFF).withValues(alpha: 0.3),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Selanjutnya',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+      child: isLoading 
+          ? const SizedBox(
+              height: 20, width: 20, 
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+            )
+          : const Text(
+              'Lanjutkan',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded, size: 20),
-          ],
-        ),
-      ),
     );
   }
 }
