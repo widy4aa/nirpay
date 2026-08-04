@@ -1,80 +1,68 @@
 # Nirpay — Offline CBDC Wallet
 
-Dompet digital CBDC (Central Bank Digital Currency) yang bisa beroperasi tanpa internet menggunakan NFC dan Bluetooth.
+**Nirpay** adalah sebuah sistem dompet digital (*digital wallet*) inovatif yang dirancang khusus untuk mendukung penggunaan **CBDC (Central Bank Digital Currency)**. Keunggulan utama dari Nirpay adalah kemampuannya untuk memfasilitasi transaksi pembayaran antar pengguna secara *offline* (tanpa koneksi internet) menggunakan teknologi **NFC** dan **Bluetooth**.
 
-## Struktur Repo
+Sistem ini didesain untuk daerah dengan konektivitas rendah atau saat terjadi gangguan jaringan, memastikan transaksi dapat terus berjalan dengan aman dan nantinya akan direkonsiliasi secara otomatis ke server pusat saat perangkat kembali *online*.
 
-```
-nirpay/
-├── client/           ← Flutter app (Android)
-│   ├── ui/           ← Desain UI / Figma exports / mockup
-│   └── lib/          ← Source code Flutter
-│
-├── backend/          ← API Server + CBDC Core + Mock Bank
-│
-├── dashboard/        ← Admin Panel (Web)
-│   └── ui/           ← Desain UI / mockup dashboard
-│
-└── dokumen/          ← Dokumentasi per komponen
-    ├── client/       ← Docs Flutter app
-    ├── backend/      ← Docs server & rekonsiliasi
-    ├── dashboard/    ← Docs admin panel
-    └── ekosistem_nirpay.md  ← Arsitektur keseluruhan
-```
+## ✨ Fitur Utama
 
-## Dokumentasi
+- **Offline P2P Transfer**: Kirim dan terima uang langsung antar pengguna (*peer-to-peer*) tanpa perlu akses internet melalui NFC (Host Card Emulation) dan komunikasi Bluetooth.
+- **Sinkronisasi Otomatis (Reconciliation)**: Transaksi offline disimpan dengan aman di perangkat lokal dan akan disinkronisasi ke server (Global Ledger) ketika koneksi internet kembali tersedia.
+- **Pencegahan Double-Spend**: Sistem backend yang handal untuk mendeteksi, menangani, dan melakukan *rollback* jika terdeteksi anomali atau percobaan pembelanjaan ganda (*double-spending*).
+- **Keamanan Kriptografi Tingkat Tinggi**: Menggunakan algoritma *Ed25519* untuk tanda tangan digital transaksi offline dan enkripsi *AES-256* (memanfaatkan *Android Keystore* / TEE) untuk mengamankan data dompet di perangkat.
 
-### 🌐 Ekosistem & Roadmap
-| Dokumen | Keterangan |
+## 🏗️ Struktur Proyek (Monorepo)
+
+Proyek ini adalah *monorepo* yang terdiri dari 3 sistem utama yang saling terhubung:
+
+- 📱 **`client/` (Mobile App)** 
+  Aplikasi pengguna akhir yang dibangun menggunakan **Flutter**. Berfungsi sebagai dompet digital offline dengan penyimpanan lokal terenkripsi.
+- ⚙️ **`backend/` (API & Core Ledger)**
+  Server pusat yang dibangun dengan **NestJS (Node.js)**. Bertugas sebagai *mock bank* CBDC, menangani proses sinkronisasi, validasi kriptografi, dan penyelesaian akhir (*settlement*).
+- 🖥️ **`dashboard/` (Admin Panel)**
+  Web administrasi yang dibangun dengan **Next.js**. Digunakan oleh staf/admin untuk memantau lalu lintas transaksi, verifikasi pengguna (KYC), dan mengawasi kesehatan *ledger*.
+
+## 🛠️ Tech Stack
+
+| Komponen | Teknologi Pendukung |
 |---|---|
-| [Ekosistem Nirpay](dokumen/ekosistem_nirpay.md) | Arsitektur sistem keseluruhan, struktur monorepo |
-| [Roadmap 5 Sprint](dokumen/sprint/README.md) | **Panduan eksekusi Sprint 1 – 5** (Client, Server & Dashboard) |
-| [Unified Consistency](dokumen/unified_consistency.md) | *Single Source of Truth* — semua enum, status & kesepakatan teknis |
-| [Visual Arsitektur](dokumen/visual_arsitektur_besar.md) | Penjelasan visual 4 aktor & alur rekonsiliasi (siap foto) |
+| **Client** | Flutter, Dart, SQLite (+ SQLCipher), Drift ORM |
+| **Backend** | Node.js (NestJS), PostgreSQL, Prisma ORM, Redis |
+| **Dashboard** | Next.js, React, Tailwind CSS |
+| **Keamanan** | AES-256, Ed25519, Argon2 |
+| **Konektivitas** | NFC (HCE), Bluetooth |
 
-### 📱 Client (Flutter)
-| Dokumen | Keterangan |
-|---|---|
-| [SRS Client](dokumen/client/srs_nirpay.md) | Software Requirements Specification |
-| [Database Schema](dokumen/client/database_schema.md) | Skema SQLite + Drift ORM + business rules |
-| [DBML Schema](dokumen/client/nirpay_schema.dbml) | Database diagram (dbdiagram.io) |
-| [Crypto Plan](dokumen/client/crypto_implementation_plan.md) | Implementasi Ed25519, AES-256 |
+## 🚀 Panduan Instalasi & Menjalankan
 
-### ⚙️ Backend
-| Dokumen | Keterangan |
-|---|---|
-| [SRS Backend](dokumen/backend/srs_backend.md) | Software Requirements Specification — seluruh API & modul |
-| [Backend Schema (DBML)](dokumen/backend/nirpay_backend_schema.dbml) | Database schema PostgreSQL — global ledger, users, wallet |
-| [Rollback Scenario](dokumen/backend/rollback_scenario.md) | Skenario double-spend & cascade rollback |
-| [Analysis Report](dokumen/backend/nirpay_analysis_report.md) | Gap analysis awal |
+Berikut adalah cara menjalankan masing-masing komponen proyek di lingkungan lokal (development):
 
-### 🖥️ Dashboard
-| Dokumen | Keterangan |
-|---|---|
-| [SRS Dashboard](dokumen/dashboard/srs_dashboard.md) | Spesifikasi fungsional admin panel — API, data model, aturan bisnis |
-| [Dashboard Schema](dokumen/backend/nirpay_backend_schema.dbml) | Menggunakan schema backend (shared PostgreSQL) |
-
-### 🎨 UI/UX Wireframes
-| Dokumen | Keterangan |
-|---|---|
-| [Wireframe Index](dokumen/ui_ux/README.md) | Index semua wireframe + perbedaan SRS vs Wireframe |
-| [Client Wireframes](dokumen/ui_ux/client/) | Auth flow, home, wallet, NFC, top-up, sync, rollback, dispute (78 state) |
-| [Dashboard Wireframes](dokumen/ui_ux/dashboard/) | Login, overview, users, KYC, ledger, chain viewer, freeze, anomaly (19 state) |
-
-## Tech Stack
-
-| Komponen | Tech |
-|---|---|
-| Client | Flutter, Dart, SQLite + SQLCipher, Drift ORM |
-| Keamanan | AES-256 (Android Keystore / TEE), Ed25519, Argon2 |
-| Offline Transfer | NFC (HCE), Bluetooth |
-| Backend | Node.js (NestJS), PostgreSQL, Prisma, Redis |
-| Dashboard | TBD (menggunakan backend API yang sama) |
-
-## Setup Client
-
+### 1. Client (Mobile App)
+Pastikan kamu telah menginstal SDK Flutter.
 ```bash
 cd client
 flutter pub get
 flutter run
 ```
+
+### 2. Backend (API Server)
+Pastikan Node.js, npm, dan PostgreSQL sudah tersedia.
+```bash
+cd backend
+npm install
+# Sesuaikan file .env untuk koneksi database
+npx prisma generate
+npx prisma db push
+npm run start:dev
+```
+
+### 3. Dashboard (Admin Web)
+Pastikan Backend sudah berjalan karena dashboard membutuhkan API backend.
+```bash
+cd dashboard
+npm install
+# Sesuaikan file .env untuk menunjuk ke URL Backend API
+npm run dev
+```
+
+---
+*Catatan: File dan dokumen rancangan internal (sprint plan, wireframe, dll.) dikecualikan dari repository ini dan dikelola secara terpisah.*
