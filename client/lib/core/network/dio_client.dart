@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 import '../config/app_config.dart';
-import '../constants/app_constants.dart';
 import '../providers/app_providers.dart';
 import '../services/app_logger.dart';
 import '../services/secure_storage_service.dart';
 import 'interceptors/auth_interceptor.dart';
+import 'interceptors/logger_interceptor.dart';
 import 'interceptors/token_interceptor.dart';
 
 class DioClient {
@@ -24,32 +24,23 @@ class DioClient {
     final dio = Dio(
       BaseOptions(
         baseUrl: config.apiBaseUrl,
-        connectTimeout: AppConstants.networkTimeout,
-        receiveTimeout: AppConstants.networkTimeout,
-      ),
-    );
-
-    if (kDebugMode && config.enableNetworkLogs) {
-      dio.interceptors.add(
-        LogInterceptor(requestBody: true, responseBody: true),
-      );
-    }
-
-    dio.interceptors.add(AuthInterceptor(storage));
-    dio.interceptors.add(TokenInterceptor(storage, logger));
-
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onError: (error, handler) {
-          logger.e(
-            '[Network] Dio error',
-            error: error,
-            stackTrace: error.stackTrace,
-          );
-          handler.next(error);
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
       ),
     );
+
+    // Custom logger — tampil rapi di debug mode
+    if (kDebugMode) {
+      dio.interceptors.add(LoggerInterceptor(logger));
+    }
+
+    dio.interceptors.add(AuthInterceptor(storage));
+    dio.interceptors.add(TokenInterceptor(logger, storage, dio));
 
     return DioClient._(dio);
   }

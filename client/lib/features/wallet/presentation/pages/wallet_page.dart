@@ -13,7 +13,7 @@ class WalletPage extends ConsumerWidget {
     final controller = ref.read(walletControllerProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Wallet')),
+      appBar: AppBar(title: Text('Wallet')),
       body: AppAsyncView(
         value: walletState,
         onRetry: () => ref.invalidate(walletControllerProvider),
@@ -34,8 +34,8 @@ class WalletPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: controller.addSampleItem,
-        label: const Text('Add'),
-        icon: const Icon(Icons.add),
+        label: Text('Add'),
+        icon: Icon(Icons.add),
       ),
     );
   }

@@ -184,7 +184,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      title: const Text(
+      title: Text(
         'Kirim Uang',
         style: TextStyle(
           color: Color(0xFF1E1E24),
@@ -200,7 +200,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black54, width: 1.5),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.question_mark_rounded,
               color: Colors.black87,
               size: 16,
@@ -214,7 +214,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
   }
 
   Widget _buildReceiverInfo() {
-    return const Column(
+    return Column(
       children: [
         Text(
           'mengirim ke',
@@ -311,7 +311,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
       children: [
         Text(
           formatRupiah(dummyTransferAmount),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w900,
             color: Color(0xFF1E1D22),
@@ -322,7 +322,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
         Text(
           _feedback,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16, color: Color(0xFF4A4A54)),
+          style: TextStyle(fontSize: 16, color: Color(0xFF4A4A54)),
         ),
         const SizedBox(height: 12),
         _buildStatusPill(),
@@ -386,7 +386,7 @@ class _NfcTransferPageState extends ConsumerState<NfcTransferPage> {
               const SizedBox(width: 8),
               Text(
                 isNoAck ? 'Tap ulang via NFC' : 'Coba via Bluetooth',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),

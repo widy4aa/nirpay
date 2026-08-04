@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_gradients.dart';
+import '../../../../core/services/network_service.dart';
 import '../controllers/auth_controller.dart';
 import '../providers/registration_form_provider.dart';
 
 class RegisterStep1Page extends ConsumerStatefulWidget {
-  const RegisterStep1Page({super.key});
+  RegisterStep1Page({super.key});
 
   @override
   ConsumerState<RegisterStep1Page> createState() => _RegisterStep1PageState();
@@ -29,23 +30,55 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
   void _onNext() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Cek koneksi
+    final networkService = ref.read(networkServiceProvider);
+    final isConnected = await networkService.isConnected();
+
+    if (!isConnected && mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          icon: Icon(Icons.wifi_off, color: Colors.red, size: 48),
+          title: Text('Tidak Ada Koneksi'),
+          content: Text(
+            'Pastikan perangkat terhubung ke internet untuk melakukan registrasi.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
 
     try {
-      await ref.read(authControllerProvider.notifier).checkAvailability(email, phone);
-      
+      final success = await ref.read(authControllerProvider.notifier).checkAvailability(email, phone);
+      if (!success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Email atau nomor telepon sudah terdaftar'), backgroundColor: context.colors.error),
+          );
+        }
+        return;
+      }
+
       ref.read(registrationFormProvider.notifier).update((state) {
         return state.copyWith(email: email, phone: phone);
       });
-      
+
       if (mounted) {
         context.pushNamed(AppRouteNames.registerStep2);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+          SnackBar(content: Text(e.toString()), backgroundColor: context.colors.error),
         );
       }
     }
@@ -57,7 +90,7 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
     final isLoading = authState.isLoading;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: AppGradients.background,
       ),
       child: Scaffold(
@@ -69,27 +102,25 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildProgressBar(),
-                            const SizedBox(height: 32),
-                            _buildHeader(),
-                            const SizedBox(height: 32),
-                            _buildForm(),
-                            const Spacer(),
-                            _buildNextButton(context, isLoading),
-                            const SizedBox(height: 24),
-                          ],
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 16.0,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildProgressBar(),
+                          const SizedBox(height: 32),
+                          _buildHeader(),
+                          const SizedBox(height: 32),
+                          _buildForm(),
+                          const SizedBox(height: 48),
+                          _buildNextButton(context, isLoading),
+                          const SizedBox(height: 24),
+                        ],
                       ),
                     ),
                   ),
@@ -108,15 +139,15 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+        icon: Icon(Icons.arrow_back_rounded, color: context.colors.textPrimary),
         onPressed: () => context.pop(),
       ),
-      title: const Text(
+      title: Text(
         'Registrasi',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: context.colors.textPrimary,
         ),
       ),
     );
@@ -126,15 +157,15 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Langkah 1 dari 5',
+        Text(
+          'Langkah 1 dari 9',
           style: TextStyle(
-            color: AppColors.primary,
+            color: context.colors.primary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -142,18 +173,18 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: context.colors.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Expanded(
-              flex: 4,
+              flex: 8,
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.border,
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -165,7 +196,7 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
   }
 
   Widget _buildHeader() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -173,14 +204,14 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
             height: 1.3,
           ),
         ),
         SizedBox(height: 12),
         Text(
           'Masukkan alamat email anda dan no telpon anda\nuntuk melanjutkan sesi Registrasi.',
-          style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+          style: TextStyle(fontSize: 14, color: context.colors.textSecondary, height: 1.5),
         ),
       ],
     );
@@ -190,15 +221,15 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Email',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         _buildTextField(
           controller: _emailController,
           hint: 'Masukan Email Anda',
@@ -211,15 +242,15 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
           },
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Nomor Ponsel',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         _buildTextField(
           controller: _phoneController,
           hint: '+62  12345678',
@@ -243,7 +274,7 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextFormField(
@@ -252,26 +283,26 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
         validator: validator,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(
-            color: AppColors.textSecondary,
+          hintStyle: TextStyle(
+            color: context.colors.textSecondary,
             fontSize: 14,
           ),
-          prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
+          prefixIcon: Icon(icon, color: context.colors.primary, size: 20),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.border),
+            borderSide: BorderSide(color: context.colors.border),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.border),
+            borderSide: BorderSide(color: context.colors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+            borderSide: BorderSide(color: context.colors.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.error),
+            borderSide: BorderSide(color: context.colors.error),
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
@@ -283,7 +314,7 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
     return ElevatedButton(
       onPressed: isLoading ? null : _onNext,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.colors.primary,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
@@ -296,7 +327,7 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
               height: 20, width: 20, 
               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             )
-          : const Text(
+          : Text(
               'Lanjutkan',
               style: TextStyle(
                 fontSize: 16,

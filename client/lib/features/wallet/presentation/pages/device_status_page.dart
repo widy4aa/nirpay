@@ -114,8 +114,8 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Test NFC'),
-        content: const Text('Pilih mode device untuk test NFC:'),
+        title: Text('Test NFC'),
+        content: Text('Pilih mode device untuk test NFC:'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         actions: [
           TextButton(
@@ -123,7 +123,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
               Navigator.pop(context);
               _startNfcReceiver();
             },
-            child: const Text(
+            child: Text(
               'Penerima',
               style: TextStyle(color: Color(0xFF1B1E28)),
             ),
@@ -140,7 +140,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Pengirim'),
+            child: Text('Pengirim'),
           ),
         ],
       ),
@@ -152,8 +152,8 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Ready to Receiving'),
-        content: const Column(
+        title: Text('Ready to Receiving'),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(color: Color(0xFF1B1E28)),
@@ -168,7 +168,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
               NfcManager.instance.stopSession();
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Batal',
               style: TextStyle(color: Color(0xFFFF3B30)),
             ),
@@ -256,7 +256,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('Hasil Terima NFC'),
+                title: Text('Hasil Terima NFC'),
                 content: Text(resultText),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -264,7 +264,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text(
+                    child: Text(
                       'OK',
                       style: TextStyle(color: Color(0xFF1B1E28)),
                     ),
@@ -291,7 +291,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kirim via NFC'),
+        title: Text('Kirim via NFC'),
         content: TextField(
           controller: textController,
           decoration: InputDecoration(
@@ -307,7 +307,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'Batal',
               style: TextStyle(color: Color(0xFFFF3B30)),
             ),
@@ -326,7 +326,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Pairing'),
+            child: Text('Pairing'),
           ),
         ],
       ),
@@ -338,8 +338,8 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Pairing...'),
-        content: const Column(
+        title: Text('Pairing...'),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(color: Color(0xFF1B1E28)),
@@ -355,7 +355,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Batal',
               style: TextStyle(color: Color(0xFFFF3B30)),
             ),
@@ -451,7 +451,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Status Hardware',
                   style: TextStyle(
                     fontSize: 24,
@@ -460,7 +460,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Berikut adalah status konektivitas perangkat keras yang diperlukan untuk transaksi aplikasi Anda.',
                   style: TextStyle(
                     fontSize: 14,
@@ -494,7 +494,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
                               color: const Color(0xFF1B1E28),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Test',
                               style: TextStyle(
                                 color: Colors.white,
@@ -542,10 +542,10 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1B1E28)),
+        icon: Icon(Icons.arrow_back_rounded, color: Color(0xFF1B1E28)),
         onPressed: () => context.pop(),
       ),
-      title: const Text(
+      title: Text(
         'Cek Device',
         style: TextStyle(
           fontSize: 18,
@@ -605,7 +605,7 @@ class _DeviceStatusPageState extends State<DeviceStatusPage> {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF1E1E24),

@@ -1,16 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  BackendTidakDapatDijangkau: 'Backend tidak dapat dijangkau. Pastikan server backend berjalan di http://localhost:3001.',
+  BackendError: 'Backend mengembalikan response error. Cek server log backend.',
+  BukanAdmin: 'Akun ini tidak memiliki akses admin.',
+};
+
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      setError(ERROR_MESSAGES[code] || 'Email atau password salah');
+    } else if (params.get('error')) {
+      setError('Email atau password salah');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +39,12 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        setError('Invalid credentials');
+        setError('Email atau password salah');
       } else {
-        router.push('/');
+        window.location.href = '/';
       }
     } catch (_) {
-      setError('An error occurred during login');
+      setError('Terjadi kesalahan saat login');
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +72,7 @@ export default function LoginPage() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          PIN (Password)
+          Password
         </label>
         <input
           type="password"
@@ -66,7 +80,7 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="••••••"
+          placeholder="min 8 karakter"
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading}>

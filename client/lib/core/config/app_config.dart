@@ -16,7 +16,7 @@ class AppConfig {
       case AppEnvironment.dev:
         return const AppConfig(
           environment: AppEnvironment.dev,
-          apiBaseUrl: 'https://api-dev.example.com',
+          apiBaseUrl: 'http://10.189.15.215:3001/api',
           enableNetworkLogs: true,
         );
       case AppEnvironment.staging:
@@ -47,7 +47,7 @@ class AppConfig {
   }
 }
 
-const String _appEnv = String.fromEnvironment('APP_ENV', defaultValue: 'prod');
+const String _appEnv = String.fromEnvironment('APP_ENV', defaultValue: 'dev');
 final AppConfig currentAppConfig = AppConfig.fromEnvironment(
   AppConfig.parse(_appEnv),
 );

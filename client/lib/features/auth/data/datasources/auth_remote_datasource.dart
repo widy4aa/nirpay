@@ -33,7 +33,7 @@ class AuthRemoteDatasource {
       '/auth/verify-otp',
       data: {'otpId': otpId, 'otpCode': otpCode},
     );
-    return response.data;
+    return response.data['data'];
   }
 
   Future<Map<String, dynamic>> checkUsername(String username) async {
@@ -46,11 +46,53 @@ class AuthRemoteDatasource {
     return response.data['data'];
   }
 
-  Future<Map<String, dynamic>> login(String email, String pin) async {
+  Future<({Map<String, dynamic> tokens, Map<String, dynamic> user})> login(
+    String email,
+    String password,
+  ) async {
     final response = await _dio.post(
       '/auth/login',
-      data: {'email': email, 'pin': pin},
+      data: {'email': email, 'password': password},
     );
-    return response.data['data'];
+    final data = response.data['data'];
+    return (
+      tokens: {
+        'accessToken': data['accessToken'],
+        'refreshToken': data['refreshToken'],
+      },
+      user: data['user'] as Map<String, dynamic>,
+    );
+  }
+
+  Future<({
+    String accessToken,
+    String refreshToken,
+    Map<String, dynamic> user,
+  })> verifyPin(
+    String pin,
+    String refreshToken,
+  ) async {
+    final response = await _dio.post(
+      '/auth/verify-pin',
+      data: {'pin': pin},
+      options: Options(
+        headers: {'Authorization': 'Bearer $refreshToken'},
+      ),
+    );
+    final data = response.data['data'];
+    return (
+      accessToken: data['accessToken'] as String,
+      refreshToken: data['refreshToken'] as String,
+      user: data['user'] as Map<String, dynamic>,
+    );
+  }
+
+  /// Update profile ke server
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
+    final response = await _dio.post(
+      '/profile/update',
+      data: data,
+    );
+    return response.data['data'] as Map<String, dynamic>;
   }
 }

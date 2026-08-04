@@ -37,10 +37,165 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _fullNameMeta = const VerificationMeta(
+    'fullName',
+  );
+  @override
+  late final GeneratedColumn<String> fullName = GeneratedColumn<String>(
+    'full_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
     'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('USER'),
+  );
+  static const VerificationMeta _kycStatusMeta = const VerificationMeta(
+    'kycStatus',
+  );
+  @override
+  late final GeneratedColumn<String> kycStatus = GeneratedColumn<String>(
+    'kyc_status',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nikMeta = const VerificationMeta('nik');
+  @override
+  late final GeneratedColumn<String> nik = GeneratedColumn<String>(
+    'nik',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _provinceMeta = const VerificationMeta(
+    'province',
+  );
+  @override
+  late final GeneratedColumn<String> province = GeneratedColumn<String>(
+    'province',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cityMeta = const VerificationMeta('city');
+  @override
+  late final GeneratedColumn<String> city = GeneratedColumn<String>(
+    'city',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _districtMeta = const VerificationMeta(
+    'district',
+  );
+  @override
+  late final GeneratedColumn<String> district = GeneratedColumn<String>(
+    'district',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _villageMeta = const VerificationMeta(
+    'village',
+  );
+  @override
+  late final GeneratedColumn<String> village = GeneratedColumn<String>(
+    'village',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _postalCodeMeta = const VerificationMeta(
+    'postalCode',
+  );
+  @override
+  late final GeneratedColumn<String> postalCode = GeneratedColumn<String>(
+    'postal_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rtMeta = const VerificationMeta('rt');
+  @override
+  late final GeneratedColumn<String> rt = GeneratedColumn<String>(
+    'rt',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rwMeta = const VerificationMeta('rw');
+  @override
+  late final GeneratedColumn<String> rw = GeneratedColumn<String>(
+    'rw',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ktpPhotoUrlMeta = const VerificationMeta(
+    'ktpPhotoUrl',
+  );
+  @override
+  late final GeneratedColumn<String> ktpPhotoUrl = GeneratedColumn<String>(
+    'ktp_photo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _profilePhotoUrlMeta = const VerificationMeta(
+    'profilePhotoUrl',
+  );
+  @override
+  late final GeneratedColumn<String> profilePhotoUrl = GeneratedColumn<String>(
+    'profile_photo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _kycFaceUrlMeta = const VerificationMeta(
+    'kycFaceUrl',
+  );
+  @override
+  late final GeneratedColumn<String> kycFaceUrl = GeneratedColumn<String>(
+    'kyc_face_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _genderMeta = const VerificationMeta('gender');
+  @override
+  late final GeneratedColumn<String> gender = GeneratedColumn<String>(
+    'gender',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -57,16 +212,20 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _pinHashMeta = const VerificationMeta(
-    'pinHash',
+  static const VerificationMeta _isDirtyMeta = const VerificationMeta(
+    'isDirty',
   );
   @override
-  late final GeneratedColumn<String> pinHash = GeneratedColumn<String>(
-    'pin_hash',
+  late final GeneratedColumn<bool> isDirty = GeneratedColumn<bool>(
+    'is_dirty',
     aliasedName,
-    true,
-    type: DriftSqlType.string,
+    false,
+    type: DriftSqlType.bool,
     requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_dirty" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -85,9 +244,24 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     id,
     email,
     username,
+    fullName,
     phone,
+    role,
+    kycStatus,
+    nik,
+    province,
+    city,
+    district,
+    village,
+    postalCode,
+    rt,
+    rw,
+    ktpPhotoUrl,
+    profilePhotoUrl,
+    kycFaceUrl,
+    gender,
     publicKeyB64,
-    pinHash,
+    isDirty,
     createdAt,
   ];
   @override
@@ -123,10 +297,103 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
     } else if (isInserting) {
       context.missing(_usernameMeta);
     }
+    if (data.containsKey('full_name')) {
+      context.handle(
+        _fullNameMeta,
+        fullName.isAcceptableOrUnknown(data['full_name']!, _fullNameMeta),
+      );
+    }
     if (data.containsKey('phone')) {
       context.handle(
         _phoneMeta,
         phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('kyc_status')) {
+      context.handle(
+        _kycStatusMeta,
+        kycStatus.isAcceptableOrUnknown(data['kyc_status']!, _kycStatusMeta),
+      );
+    }
+    if (data.containsKey('nik')) {
+      context.handle(
+        _nikMeta,
+        nik.isAcceptableOrUnknown(data['nik']!, _nikMeta),
+      );
+    }
+    if (data.containsKey('province')) {
+      context.handle(
+        _provinceMeta,
+        province.isAcceptableOrUnknown(data['province']!, _provinceMeta),
+      );
+    }
+    if (data.containsKey('city')) {
+      context.handle(
+        _cityMeta,
+        city.isAcceptableOrUnknown(data['city']!, _cityMeta),
+      );
+    }
+    if (data.containsKey('district')) {
+      context.handle(
+        _districtMeta,
+        district.isAcceptableOrUnknown(data['district']!, _districtMeta),
+      );
+    }
+    if (data.containsKey('village')) {
+      context.handle(
+        _villageMeta,
+        village.isAcceptableOrUnknown(data['village']!, _villageMeta),
+      );
+    }
+    if (data.containsKey('postal_code')) {
+      context.handle(
+        _postalCodeMeta,
+        postalCode.isAcceptableOrUnknown(data['postal_code']!, _postalCodeMeta),
+      );
+    }
+    if (data.containsKey('rt')) {
+      context.handle(_rtMeta, rt.isAcceptableOrUnknown(data['rt']!, _rtMeta));
+    }
+    if (data.containsKey('rw')) {
+      context.handle(_rwMeta, rw.isAcceptableOrUnknown(data['rw']!, _rwMeta));
+    }
+    if (data.containsKey('ktp_photo_url')) {
+      context.handle(
+        _ktpPhotoUrlMeta,
+        ktpPhotoUrl.isAcceptableOrUnknown(
+          data['ktp_photo_url']!,
+          _ktpPhotoUrlMeta,
+        ),
+      );
+    }
+    if (data.containsKey('profile_photo_url')) {
+      context.handle(
+        _profilePhotoUrlMeta,
+        profilePhotoUrl.isAcceptableOrUnknown(
+          data['profile_photo_url']!,
+          _profilePhotoUrlMeta,
+        ),
+      );
+    }
+    if (data.containsKey('kyc_face_url')) {
+      context.handle(
+        _kycFaceUrlMeta,
+        kycFaceUrl.isAcceptableOrUnknown(
+          data['kyc_face_url']!,
+          _kycFaceUrlMeta,
+        ),
+      );
+    }
+    if (data.containsKey('gender')) {
+      context.handle(
+        _genderMeta,
+        gender.isAcceptableOrUnknown(data['gender']!, _genderMeta),
       );
     }
     if (data.containsKey('public_key_b64')) {
@@ -138,10 +405,10 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
         ),
       );
     }
-    if (data.containsKey('pin_hash')) {
+    if (data.containsKey('is_dirty')) {
       context.handle(
-        _pinHashMeta,
-        pinHash.isAcceptableOrUnknown(data['pin_hash']!, _pinHashMeta),
+        _isDirtyMeta,
+        isDirty.isAcceptableOrUnknown(data['is_dirty']!, _isDirtyMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -171,18 +438,78 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UserEntry> {
         DriftSqlType.string,
         data['${effectivePrefix}username'],
       )!,
+      fullName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}full_name'],
+      )!,
       phone: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}phone'],
+      ),
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      kycStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kyc_status'],
+      ),
+      nik: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nik'],
+      ),
+      province: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}province'],
+      ),
+      city: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city'],
+      ),
+      district: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}district'],
+      ),
+      village: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}village'],
+      ),
+      postalCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}postal_code'],
+      ),
+      rt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rt'],
+      ),
+      rw: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rw'],
+      ),
+      ktpPhotoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ktp_photo_url'],
+      ),
+      profilePhotoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}profile_photo_url'],
+      ),
+      kycFaceUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kyc_face_url'],
+      ),
+      gender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gender'],
       ),
       publicKeyB64: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}public_key_b64'],
       ),
-      pinHash: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}pin_hash'],
-      ),
+      isDirty: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_dirty'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -200,17 +527,47 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
   final String id;
   final String email;
   final String username;
+  final String fullName;
   final String? phone;
+  final String role;
+  final String? kycStatus;
+  final String? nik;
+  final String? province;
+  final String? city;
+  final String? district;
+  final String? village;
+  final String? postalCode;
+  final String? rt;
+  final String? rw;
+  final String? ktpPhotoUrl;
+  final String? profilePhotoUrl;
+  final String? kycFaceUrl;
+  final String? gender;
   final String? publicKeyB64;
-  final String? pinHash;
+  final bool isDirty;
   final DateTime createdAt;
   const UserEntry({
     required this.id,
     required this.email,
     required this.username,
+    required this.fullName,
     this.phone,
+    required this.role,
+    this.kycStatus,
+    this.nik,
+    this.province,
+    this.city,
+    this.district,
+    this.village,
+    this.postalCode,
+    this.rt,
+    this.rw,
+    this.ktpPhotoUrl,
+    this.profilePhotoUrl,
+    this.kycFaceUrl,
+    this.gender,
     this.publicKeyB64,
-    this.pinHash,
+    required this.isDirty,
     required this.createdAt,
   });
   @override
@@ -219,15 +576,54 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     map['id'] = Variable<String>(id);
     map['email'] = Variable<String>(email);
     map['username'] = Variable<String>(username);
+    map['full_name'] = Variable<String>(fullName);
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
+    }
+    map['role'] = Variable<String>(role);
+    if (!nullToAbsent || kycStatus != null) {
+      map['kyc_status'] = Variable<String>(kycStatus);
+    }
+    if (!nullToAbsent || nik != null) {
+      map['nik'] = Variable<String>(nik);
+    }
+    if (!nullToAbsent || province != null) {
+      map['province'] = Variable<String>(province);
+    }
+    if (!nullToAbsent || city != null) {
+      map['city'] = Variable<String>(city);
+    }
+    if (!nullToAbsent || district != null) {
+      map['district'] = Variable<String>(district);
+    }
+    if (!nullToAbsent || village != null) {
+      map['village'] = Variable<String>(village);
+    }
+    if (!nullToAbsent || postalCode != null) {
+      map['postal_code'] = Variable<String>(postalCode);
+    }
+    if (!nullToAbsent || rt != null) {
+      map['rt'] = Variable<String>(rt);
+    }
+    if (!nullToAbsent || rw != null) {
+      map['rw'] = Variable<String>(rw);
+    }
+    if (!nullToAbsent || ktpPhotoUrl != null) {
+      map['ktp_photo_url'] = Variable<String>(ktpPhotoUrl);
+    }
+    if (!nullToAbsent || profilePhotoUrl != null) {
+      map['profile_photo_url'] = Variable<String>(profilePhotoUrl);
+    }
+    if (!nullToAbsent || kycFaceUrl != null) {
+      map['kyc_face_url'] = Variable<String>(kycFaceUrl);
+    }
+    if (!nullToAbsent || gender != null) {
+      map['gender'] = Variable<String>(gender);
     }
     if (!nullToAbsent || publicKeyB64 != null) {
       map['public_key_b64'] = Variable<String>(publicKeyB64);
     }
-    if (!nullToAbsent || pinHash != null) {
-      map['pin_hash'] = Variable<String>(pinHash);
-    }
+    map['is_dirty'] = Variable<bool>(isDirty);
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -237,15 +633,46 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
       id: Value(id),
       email: Value(email),
       username: Value(username),
+      fullName: Value(fullName),
       phone: phone == null && nullToAbsent
           ? const Value.absent()
           : Value(phone),
+      role: Value(role),
+      kycStatus: kycStatus == null && nullToAbsent
+          ? const Value.absent()
+          : Value(kycStatus),
+      nik: nik == null && nullToAbsent ? const Value.absent() : Value(nik),
+      province: province == null && nullToAbsent
+          ? const Value.absent()
+          : Value(province),
+      city: city == null && nullToAbsent ? const Value.absent() : Value(city),
+      district: district == null && nullToAbsent
+          ? const Value.absent()
+          : Value(district),
+      village: village == null && nullToAbsent
+          ? const Value.absent()
+          : Value(village),
+      postalCode: postalCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(postalCode),
+      rt: rt == null && nullToAbsent ? const Value.absent() : Value(rt),
+      rw: rw == null && nullToAbsent ? const Value.absent() : Value(rw),
+      ktpPhotoUrl: ktpPhotoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ktpPhotoUrl),
+      profilePhotoUrl: profilePhotoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(profilePhotoUrl),
+      kycFaceUrl: kycFaceUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(kycFaceUrl),
+      gender: gender == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gender),
       publicKeyB64: publicKeyB64 == null && nullToAbsent
           ? const Value.absent()
           : Value(publicKeyB64),
-      pinHash: pinHash == null && nullToAbsent
-          ? const Value.absent()
-          : Value(pinHash),
+      isDirty: Value(isDirty),
       createdAt: Value(createdAt),
     );
   }
@@ -259,9 +686,24 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
       id: serializer.fromJson<String>(json['id']),
       email: serializer.fromJson<String>(json['email']),
       username: serializer.fromJson<String>(json['username']),
+      fullName: serializer.fromJson<String>(json['fullName']),
       phone: serializer.fromJson<String?>(json['phone']),
+      role: serializer.fromJson<String>(json['role']),
+      kycStatus: serializer.fromJson<String?>(json['kycStatus']),
+      nik: serializer.fromJson<String?>(json['nik']),
+      province: serializer.fromJson<String?>(json['province']),
+      city: serializer.fromJson<String?>(json['city']),
+      district: serializer.fromJson<String?>(json['district']),
+      village: serializer.fromJson<String?>(json['village']),
+      postalCode: serializer.fromJson<String?>(json['postalCode']),
+      rt: serializer.fromJson<String?>(json['rt']),
+      rw: serializer.fromJson<String?>(json['rw']),
+      ktpPhotoUrl: serializer.fromJson<String?>(json['ktpPhotoUrl']),
+      profilePhotoUrl: serializer.fromJson<String?>(json['profilePhotoUrl']),
+      kycFaceUrl: serializer.fromJson<String?>(json['kycFaceUrl']),
+      gender: serializer.fromJson<String?>(json['gender']),
       publicKeyB64: serializer.fromJson<String?>(json['publicKeyB64']),
-      pinHash: serializer.fromJson<String?>(json['pinHash']),
+      isDirty: serializer.fromJson<bool>(json['isDirty']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -272,9 +714,24 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
       'id': serializer.toJson<String>(id),
       'email': serializer.toJson<String>(email),
       'username': serializer.toJson<String>(username),
+      'fullName': serializer.toJson<String>(fullName),
       'phone': serializer.toJson<String?>(phone),
+      'role': serializer.toJson<String>(role),
+      'kycStatus': serializer.toJson<String?>(kycStatus),
+      'nik': serializer.toJson<String?>(nik),
+      'province': serializer.toJson<String?>(province),
+      'city': serializer.toJson<String?>(city),
+      'district': serializer.toJson<String?>(district),
+      'village': serializer.toJson<String?>(village),
+      'postalCode': serializer.toJson<String?>(postalCode),
+      'rt': serializer.toJson<String?>(rt),
+      'rw': serializer.toJson<String?>(rw),
+      'ktpPhotoUrl': serializer.toJson<String?>(ktpPhotoUrl),
+      'profilePhotoUrl': serializer.toJson<String?>(profilePhotoUrl),
+      'kycFaceUrl': serializer.toJson<String?>(kycFaceUrl),
+      'gender': serializer.toJson<String?>(gender),
       'publicKeyB64': serializer.toJson<String?>(publicKeyB64),
-      'pinHash': serializer.toJson<String?>(pinHash),
+      'isDirty': serializer.toJson<bool>(isDirty),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -283,17 +740,49 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
     String? id,
     String? email,
     String? username,
+    String? fullName,
     Value<String?> phone = const Value.absent(),
+    String? role,
+    Value<String?> kycStatus = const Value.absent(),
+    Value<String?> nik = const Value.absent(),
+    Value<String?> province = const Value.absent(),
+    Value<String?> city = const Value.absent(),
+    Value<String?> district = const Value.absent(),
+    Value<String?> village = const Value.absent(),
+    Value<String?> postalCode = const Value.absent(),
+    Value<String?> rt = const Value.absent(),
+    Value<String?> rw = const Value.absent(),
+    Value<String?> ktpPhotoUrl = const Value.absent(),
+    Value<String?> profilePhotoUrl = const Value.absent(),
+    Value<String?> kycFaceUrl = const Value.absent(),
+    Value<String?> gender = const Value.absent(),
     Value<String?> publicKeyB64 = const Value.absent(),
-    Value<String?> pinHash = const Value.absent(),
+    bool? isDirty,
     DateTime? createdAt,
   }) => UserEntry(
     id: id ?? this.id,
     email: email ?? this.email,
     username: username ?? this.username,
+    fullName: fullName ?? this.fullName,
     phone: phone.present ? phone.value : this.phone,
+    role: role ?? this.role,
+    kycStatus: kycStatus.present ? kycStatus.value : this.kycStatus,
+    nik: nik.present ? nik.value : this.nik,
+    province: province.present ? province.value : this.province,
+    city: city.present ? city.value : this.city,
+    district: district.present ? district.value : this.district,
+    village: village.present ? village.value : this.village,
+    postalCode: postalCode.present ? postalCode.value : this.postalCode,
+    rt: rt.present ? rt.value : this.rt,
+    rw: rw.present ? rw.value : this.rw,
+    ktpPhotoUrl: ktpPhotoUrl.present ? ktpPhotoUrl.value : this.ktpPhotoUrl,
+    profilePhotoUrl: profilePhotoUrl.present
+        ? profilePhotoUrl.value
+        : this.profilePhotoUrl,
+    kycFaceUrl: kycFaceUrl.present ? kycFaceUrl.value : this.kycFaceUrl,
+    gender: gender.present ? gender.value : this.gender,
     publicKeyB64: publicKeyB64.present ? publicKeyB64.value : this.publicKeyB64,
-    pinHash: pinHash.present ? pinHash.value : this.pinHash,
+    isDirty: isDirty ?? this.isDirty,
     createdAt: createdAt ?? this.createdAt,
   );
   UserEntry copyWithCompanion(UsersCompanion data) {
@@ -301,11 +790,34 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
       id: data.id.present ? data.id.value : this.id,
       email: data.email.present ? data.email.value : this.email,
       username: data.username.present ? data.username.value : this.username,
+      fullName: data.fullName.present ? data.fullName.value : this.fullName,
       phone: data.phone.present ? data.phone.value : this.phone,
+      role: data.role.present ? data.role.value : this.role,
+      kycStatus: data.kycStatus.present ? data.kycStatus.value : this.kycStatus,
+      nik: data.nik.present ? data.nik.value : this.nik,
+      province: data.province.present ? data.province.value : this.province,
+      city: data.city.present ? data.city.value : this.city,
+      district: data.district.present ? data.district.value : this.district,
+      village: data.village.present ? data.village.value : this.village,
+      postalCode: data.postalCode.present
+          ? data.postalCode.value
+          : this.postalCode,
+      rt: data.rt.present ? data.rt.value : this.rt,
+      rw: data.rw.present ? data.rw.value : this.rw,
+      ktpPhotoUrl: data.ktpPhotoUrl.present
+          ? data.ktpPhotoUrl.value
+          : this.ktpPhotoUrl,
+      profilePhotoUrl: data.profilePhotoUrl.present
+          ? data.profilePhotoUrl.value
+          : this.profilePhotoUrl,
+      kycFaceUrl: data.kycFaceUrl.present
+          ? data.kycFaceUrl.value
+          : this.kycFaceUrl,
+      gender: data.gender.present ? data.gender.value : this.gender,
       publicKeyB64: data.publicKeyB64.present
           ? data.publicKeyB64.value
           : this.publicKeyB64,
-      pinHash: data.pinHash.present ? data.pinHash.value : this.pinHash,
+      isDirty: data.isDirty.present ? data.isDirty.value : this.isDirty,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -316,17 +828,54 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
           ..write('id: $id, ')
           ..write('email: $email, ')
           ..write('username: $username, ')
+          ..write('fullName: $fullName, ')
           ..write('phone: $phone, ')
+          ..write('role: $role, ')
+          ..write('kycStatus: $kycStatus, ')
+          ..write('nik: $nik, ')
+          ..write('province: $province, ')
+          ..write('city: $city, ')
+          ..write('district: $district, ')
+          ..write('village: $village, ')
+          ..write('postalCode: $postalCode, ')
+          ..write('rt: $rt, ')
+          ..write('rw: $rw, ')
+          ..write('ktpPhotoUrl: $ktpPhotoUrl, ')
+          ..write('profilePhotoUrl: $profilePhotoUrl, ')
+          ..write('kycFaceUrl: $kycFaceUrl, ')
+          ..write('gender: $gender, ')
           ..write('publicKeyB64: $publicKeyB64, ')
-          ..write('pinHash: $pinHash, ')
+          ..write('isDirty: $isDirty, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, email, username, phone, publicKeyB64, pinHash, createdAt);
+  int get hashCode => Object.hashAll([
+    id,
+    email,
+    username,
+    fullName,
+    phone,
+    role,
+    kycStatus,
+    nik,
+    province,
+    city,
+    district,
+    village,
+    postalCode,
+    rt,
+    rw,
+    ktpPhotoUrl,
+    profilePhotoUrl,
+    kycFaceUrl,
+    gender,
+    publicKeyB64,
+    isDirty,
+    createdAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -334,9 +883,24 @@ class UserEntry extends DataClass implements Insertable<UserEntry> {
           other.id == this.id &&
           other.email == this.email &&
           other.username == this.username &&
+          other.fullName == this.fullName &&
           other.phone == this.phone &&
+          other.role == this.role &&
+          other.kycStatus == this.kycStatus &&
+          other.nik == this.nik &&
+          other.province == this.province &&
+          other.city == this.city &&
+          other.district == this.district &&
+          other.village == this.village &&
+          other.postalCode == this.postalCode &&
+          other.rt == this.rt &&
+          other.rw == this.rw &&
+          other.ktpPhotoUrl == this.ktpPhotoUrl &&
+          other.profilePhotoUrl == this.profilePhotoUrl &&
+          other.kycFaceUrl == this.kycFaceUrl &&
+          other.gender == this.gender &&
           other.publicKeyB64 == this.publicKeyB64 &&
-          other.pinHash == this.pinHash &&
+          other.isDirty == this.isDirty &&
           other.createdAt == this.createdAt);
 }
 
@@ -344,18 +908,48 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
   final Value<String> id;
   final Value<String> email;
   final Value<String> username;
+  final Value<String> fullName;
   final Value<String?> phone;
+  final Value<String> role;
+  final Value<String?> kycStatus;
+  final Value<String?> nik;
+  final Value<String?> province;
+  final Value<String?> city;
+  final Value<String?> district;
+  final Value<String?> village;
+  final Value<String?> postalCode;
+  final Value<String?> rt;
+  final Value<String?> rw;
+  final Value<String?> ktpPhotoUrl;
+  final Value<String?> profilePhotoUrl;
+  final Value<String?> kycFaceUrl;
+  final Value<String?> gender;
   final Value<String?> publicKeyB64;
-  final Value<String?> pinHash;
+  final Value<bool> isDirty;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
   const UsersCompanion({
     this.id = const Value.absent(),
     this.email = const Value.absent(),
     this.username = const Value.absent(),
+    this.fullName = const Value.absent(),
     this.phone = const Value.absent(),
+    this.role = const Value.absent(),
+    this.kycStatus = const Value.absent(),
+    this.nik = const Value.absent(),
+    this.province = const Value.absent(),
+    this.city = const Value.absent(),
+    this.district = const Value.absent(),
+    this.village = const Value.absent(),
+    this.postalCode = const Value.absent(),
+    this.rt = const Value.absent(),
+    this.rw = const Value.absent(),
+    this.ktpPhotoUrl = const Value.absent(),
+    this.profilePhotoUrl = const Value.absent(),
+    this.kycFaceUrl = const Value.absent(),
+    this.gender = const Value.absent(),
     this.publicKeyB64 = const Value.absent(),
-    this.pinHash = const Value.absent(),
+    this.isDirty = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -363,9 +957,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     required String id,
     required String email,
     required String username,
+    this.fullName = const Value.absent(),
     this.phone = const Value.absent(),
+    this.role = const Value.absent(),
+    this.kycStatus = const Value.absent(),
+    this.nik = const Value.absent(),
+    this.province = const Value.absent(),
+    this.city = const Value.absent(),
+    this.district = const Value.absent(),
+    this.village = const Value.absent(),
+    this.postalCode = const Value.absent(),
+    this.rt = const Value.absent(),
+    this.rw = const Value.absent(),
+    this.ktpPhotoUrl = const Value.absent(),
+    this.profilePhotoUrl = const Value.absent(),
+    this.kycFaceUrl = const Value.absent(),
+    this.gender = const Value.absent(),
     this.publicKeyB64 = const Value.absent(),
-    this.pinHash = const Value.absent(),
+    this.isDirty = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -375,9 +984,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     Expression<String>? id,
     Expression<String>? email,
     Expression<String>? username,
+    Expression<String>? fullName,
     Expression<String>? phone,
+    Expression<String>? role,
+    Expression<String>? kycStatus,
+    Expression<String>? nik,
+    Expression<String>? province,
+    Expression<String>? city,
+    Expression<String>? district,
+    Expression<String>? village,
+    Expression<String>? postalCode,
+    Expression<String>? rt,
+    Expression<String>? rw,
+    Expression<String>? ktpPhotoUrl,
+    Expression<String>? profilePhotoUrl,
+    Expression<String>? kycFaceUrl,
+    Expression<String>? gender,
     Expression<String>? publicKeyB64,
-    Expression<String>? pinHash,
+    Expression<bool>? isDirty,
     Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
@@ -385,9 +1009,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
       if (id != null) 'id': id,
       if (email != null) 'email': email,
       if (username != null) 'username': username,
+      if (fullName != null) 'full_name': fullName,
       if (phone != null) 'phone': phone,
+      if (role != null) 'role': role,
+      if (kycStatus != null) 'kyc_status': kycStatus,
+      if (nik != null) 'nik': nik,
+      if (province != null) 'province': province,
+      if (city != null) 'city': city,
+      if (district != null) 'district': district,
+      if (village != null) 'village': village,
+      if (postalCode != null) 'postal_code': postalCode,
+      if (rt != null) 'rt': rt,
+      if (rw != null) 'rw': rw,
+      if (ktpPhotoUrl != null) 'ktp_photo_url': ktpPhotoUrl,
+      if (profilePhotoUrl != null) 'profile_photo_url': profilePhotoUrl,
+      if (kycFaceUrl != null) 'kyc_face_url': kycFaceUrl,
+      if (gender != null) 'gender': gender,
       if (publicKeyB64 != null) 'public_key_b64': publicKeyB64,
-      if (pinHash != null) 'pin_hash': pinHash,
+      if (isDirty != null) 'is_dirty': isDirty,
       if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -397,9 +1036,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     Value<String>? id,
     Value<String>? email,
     Value<String>? username,
+    Value<String>? fullName,
     Value<String?>? phone,
+    Value<String>? role,
+    Value<String?>? kycStatus,
+    Value<String?>? nik,
+    Value<String?>? province,
+    Value<String?>? city,
+    Value<String?>? district,
+    Value<String?>? village,
+    Value<String?>? postalCode,
+    Value<String?>? rt,
+    Value<String?>? rw,
+    Value<String?>? ktpPhotoUrl,
+    Value<String?>? profilePhotoUrl,
+    Value<String?>? kycFaceUrl,
+    Value<String?>? gender,
     Value<String?>? publicKeyB64,
-    Value<String?>? pinHash,
+    Value<bool>? isDirty,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
@@ -407,9 +1061,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
       id: id ?? this.id,
       email: email ?? this.email,
       username: username ?? this.username,
+      fullName: fullName ?? this.fullName,
       phone: phone ?? this.phone,
+      role: role ?? this.role,
+      kycStatus: kycStatus ?? this.kycStatus,
+      nik: nik ?? this.nik,
+      province: province ?? this.province,
+      city: city ?? this.city,
+      district: district ?? this.district,
+      village: village ?? this.village,
+      postalCode: postalCode ?? this.postalCode,
+      rt: rt ?? this.rt,
+      rw: rw ?? this.rw,
+      ktpPhotoUrl: ktpPhotoUrl ?? this.ktpPhotoUrl,
+      profilePhotoUrl: profilePhotoUrl ?? this.profilePhotoUrl,
+      kycFaceUrl: kycFaceUrl ?? this.kycFaceUrl,
+      gender: gender ?? this.gender,
       publicKeyB64: publicKeyB64 ?? this.publicKeyB64,
-      pinHash: pinHash ?? this.pinHash,
+      isDirty: isDirty ?? this.isDirty,
       createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
@@ -427,14 +1096,59 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
     if (username.present) {
       map['username'] = Variable<String>(username.value);
     }
+    if (fullName.present) {
+      map['full_name'] = Variable<String>(fullName.value);
+    }
     if (phone.present) {
       map['phone'] = Variable<String>(phone.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (kycStatus.present) {
+      map['kyc_status'] = Variable<String>(kycStatus.value);
+    }
+    if (nik.present) {
+      map['nik'] = Variable<String>(nik.value);
+    }
+    if (province.present) {
+      map['province'] = Variable<String>(province.value);
+    }
+    if (city.present) {
+      map['city'] = Variable<String>(city.value);
+    }
+    if (district.present) {
+      map['district'] = Variable<String>(district.value);
+    }
+    if (village.present) {
+      map['village'] = Variable<String>(village.value);
+    }
+    if (postalCode.present) {
+      map['postal_code'] = Variable<String>(postalCode.value);
+    }
+    if (rt.present) {
+      map['rt'] = Variable<String>(rt.value);
+    }
+    if (rw.present) {
+      map['rw'] = Variable<String>(rw.value);
+    }
+    if (ktpPhotoUrl.present) {
+      map['ktp_photo_url'] = Variable<String>(ktpPhotoUrl.value);
+    }
+    if (profilePhotoUrl.present) {
+      map['profile_photo_url'] = Variable<String>(profilePhotoUrl.value);
+    }
+    if (kycFaceUrl.present) {
+      map['kyc_face_url'] = Variable<String>(kycFaceUrl.value);
+    }
+    if (gender.present) {
+      map['gender'] = Variable<String>(gender.value);
     }
     if (publicKeyB64.present) {
       map['public_key_b64'] = Variable<String>(publicKeyB64.value);
     }
-    if (pinHash.present) {
-      map['pin_hash'] = Variable<String>(pinHash.value);
+    if (isDirty.present) {
+      map['is_dirty'] = Variable<bool>(isDirty.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -451,9 +1165,24 @@ class UsersCompanion extends UpdateCompanion<UserEntry> {
           ..write('id: $id, ')
           ..write('email: $email, ')
           ..write('username: $username, ')
+          ..write('fullName: $fullName, ')
           ..write('phone: $phone, ')
+          ..write('role: $role, ')
+          ..write('kycStatus: $kycStatus, ')
+          ..write('nik: $nik, ')
+          ..write('province: $province, ')
+          ..write('city: $city, ')
+          ..write('district: $district, ')
+          ..write('village: $village, ')
+          ..write('postalCode: $postalCode, ')
+          ..write('rt: $rt, ')
+          ..write('rw: $rw, ')
+          ..write('ktpPhotoUrl: $ktpPhotoUrl, ')
+          ..write('profilePhotoUrl: $profilePhotoUrl, ')
+          ..write('kycFaceUrl: $kycFaceUrl, ')
+          ..write('gender: $gender, ')
           ..write('publicKeyB64: $publicKeyB64, ')
-          ..write('pinHash: $pinHash, ')
+          ..write('isDirty: $isDirty, ')
           ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -1048,6 +1777,28 @@ class $TransactionsTable extends Transactions
     requiredDuringInsert: false,
     defaultValue: const Constant('PENDING'),
   );
+  static const VerificationMeta _counterpartyNameMeta = const VerificationMeta(
+    'counterpartyName',
+  );
+  @override
+  late final GeneratedColumn<String> counterpartyName = GeneratedColumn<String>(
+    'counterparty_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _counterpartyIdMeta = const VerificationMeta(
+    'counterpartyId',
+  );
+  @override
+  late final GeneratedColumn<String> counterpartyId = GeneratedColumn<String>(
+    'counterparty_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1069,6 +1820,8 @@ class $TransactionsTable extends Transactions
     amountCent,
     hopCount,
     syncStatus,
+    counterpartyName,
+    counterpartyId,
     createdAt,
   ];
   @override
@@ -1132,6 +1885,24 @@ class $TransactionsTable extends Transactions
         syncStatus.isAcceptableOrUnknown(data['sync_status']!, _syncStatusMeta),
       );
     }
+    if (data.containsKey('counterparty_name')) {
+      context.handle(
+        _counterpartyNameMeta,
+        counterpartyName.isAcceptableOrUnknown(
+          data['counterparty_name']!,
+          _counterpartyNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('counterparty_id')) {
+      context.handle(
+        _counterpartyIdMeta,
+        counterpartyId.isAcceptableOrUnknown(
+          data['counterparty_id']!,
+          _counterpartyIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1175,6 +1946,14 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}sync_status'],
       )!,
+      counterpartyName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}counterparty_name'],
+      ),
+      counterpartyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}counterparty_id'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1197,6 +1976,8 @@ class TransactionEntry extends DataClass
   final int amountCent;
   final int hopCount;
   final String syncStatus;
+  final String? counterpartyName;
+  final String? counterpartyId;
   final DateTime createdAt;
   const TransactionEntry({
     required this.id,
@@ -1206,6 +1987,8 @@ class TransactionEntry extends DataClass
     required this.amountCent,
     required this.hopCount,
     required this.syncStatus,
+    this.counterpartyName,
+    this.counterpartyId,
     required this.createdAt,
   });
   @override
@@ -1218,6 +2001,12 @@ class TransactionEntry extends DataClass
     map['amount_cent'] = Variable<int>(amountCent);
     map['hop_count'] = Variable<int>(hopCount);
     map['sync_status'] = Variable<String>(syncStatus);
+    if (!nullToAbsent || counterpartyName != null) {
+      map['counterparty_name'] = Variable<String>(counterpartyName);
+    }
+    if (!nullToAbsent || counterpartyId != null) {
+      map['counterparty_id'] = Variable<String>(counterpartyId);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -1231,6 +2020,12 @@ class TransactionEntry extends DataClass
       amountCent: Value(amountCent),
       hopCount: Value(hopCount),
       syncStatus: Value(syncStatus),
+      counterpartyName: counterpartyName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(counterpartyName),
+      counterpartyId: counterpartyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(counterpartyId),
       createdAt: Value(createdAt),
     );
   }
@@ -1248,6 +2043,8 @@ class TransactionEntry extends DataClass
       amountCent: serializer.fromJson<int>(json['amountCent']),
       hopCount: serializer.fromJson<int>(json['hopCount']),
       syncStatus: serializer.fromJson<String>(json['syncStatus']),
+      counterpartyName: serializer.fromJson<String?>(json['counterpartyName']),
+      counterpartyId: serializer.fromJson<String?>(json['counterpartyId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -1262,6 +2059,8 @@ class TransactionEntry extends DataClass
       'amountCent': serializer.toJson<int>(amountCent),
       'hopCount': serializer.toJson<int>(hopCount),
       'syncStatus': serializer.toJson<String>(syncStatus),
+      'counterpartyName': serializer.toJson<String?>(counterpartyName),
+      'counterpartyId': serializer.toJson<String?>(counterpartyId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -1274,6 +2073,8 @@ class TransactionEntry extends DataClass
     int? amountCent,
     int? hopCount,
     String? syncStatus,
+    Value<String?> counterpartyName = const Value.absent(),
+    Value<String?> counterpartyId = const Value.absent(),
     DateTime? createdAt,
   }) => TransactionEntry(
     id: id ?? this.id,
@@ -1283,6 +2084,12 @@ class TransactionEntry extends DataClass
     amountCent: amountCent ?? this.amountCent,
     hopCount: hopCount ?? this.hopCount,
     syncStatus: syncStatus ?? this.syncStatus,
+    counterpartyName: counterpartyName.present
+        ? counterpartyName.value
+        : this.counterpartyName,
+    counterpartyId: counterpartyId.present
+        ? counterpartyId.value
+        : this.counterpartyId,
     createdAt: createdAt ?? this.createdAt,
   );
   TransactionEntry copyWithCompanion(TransactionsCompanion data) {
@@ -1298,6 +2105,12 @@ class TransactionEntry extends DataClass
       syncStatus: data.syncStatus.present
           ? data.syncStatus.value
           : this.syncStatus,
+      counterpartyName: data.counterpartyName.present
+          ? data.counterpartyName.value
+          : this.counterpartyName,
+      counterpartyId: data.counterpartyId.present
+          ? data.counterpartyId.value
+          : this.counterpartyId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -1312,6 +2125,8 @@ class TransactionEntry extends DataClass
           ..write('amountCent: $amountCent, ')
           ..write('hopCount: $hopCount, ')
           ..write('syncStatus: $syncStatus, ')
+          ..write('counterpartyName: $counterpartyName, ')
+          ..write('counterpartyId: $counterpartyId, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -1326,6 +2141,8 @@ class TransactionEntry extends DataClass
     amountCent,
     hopCount,
     syncStatus,
+    counterpartyName,
+    counterpartyId,
     createdAt,
   );
   @override
@@ -1339,6 +2156,8 @@ class TransactionEntry extends DataClass
           other.amountCent == this.amountCent &&
           other.hopCount == this.hopCount &&
           other.syncStatus == this.syncStatus &&
+          other.counterpartyName == this.counterpartyName &&
+          other.counterpartyId == this.counterpartyId &&
           other.createdAt == this.createdAt);
 }
 
@@ -1350,6 +2169,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
   final Value<int> amountCent;
   final Value<int> hopCount;
   final Value<String> syncStatus;
+  final Value<String?> counterpartyName;
+  final Value<String?> counterpartyId;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
   const TransactionsCompanion({
@@ -1360,6 +2181,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
     this.amountCent = const Value.absent(),
     this.hopCount = const Value.absent(),
     this.syncStatus = const Value.absent(),
+    this.counterpartyName = const Value.absent(),
+    this.counterpartyId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -1371,6 +2194,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
     required int amountCent,
     this.hopCount = const Value.absent(),
     this.syncStatus = const Value.absent(),
+    this.counterpartyName = const Value.absent(),
+    this.counterpartyId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -1386,6 +2211,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
     Expression<int>? amountCent,
     Expression<int>? hopCount,
     Expression<String>? syncStatus,
+    Expression<String>? counterpartyName,
+    Expression<String>? counterpartyId,
     Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
@@ -1397,6 +2224,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
       if (amountCent != null) 'amount_cent': amountCent,
       if (hopCount != null) 'hop_count': hopCount,
       if (syncStatus != null) 'sync_status': syncStatus,
+      if (counterpartyName != null) 'counterparty_name': counterpartyName,
+      if (counterpartyId != null) 'counterparty_id': counterpartyId,
       if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -1410,6 +2239,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
     Value<int>? amountCent,
     Value<int>? hopCount,
     Value<String>? syncStatus,
+    Value<String?>? counterpartyName,
+    Value<String?>? counterpartyId,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
@@ -1421,6 +2252,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
       amountCent: amountCent ?? this.amountCent,
       hopCount: hopCount ?? this.hopCount,
       syncStatus: syncStatus ?? this.syncStatus,
+      counterpartyName: counterpartyName ?? this.counterpartyName,
+      counterpartyId: counterpartyId ?? this.counterpartyId,
       createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
@@ -1450,6 +2283,12 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
     if (syncStatus.present) {
       map['sync_status'] = Variable<String>(syncStatus.value);
     }
+    if (counterpartyName.present) {
+      map['counterparty_name'] = Variable<String>(counterpartyName.value);
+    }
+    if (counterpartyId.present) {
+      map['counterparty_id'] = Variable<String>(counterpartyId.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1469,6 +2308,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionEntry> {
           ..write('amountCent: $amountCent, ')
           ..write('hopCount: $hopCount, ')
           ..write('syncStatus: $syncStatus, ')
+          ..write('counterpartyName: $counterpartyName, ')
+          ..write('counterpartyId: $counterpartyId, ')
           ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -1498,9 +2339,24 @@ typedef $$UsersTableCreateCompanionBuilder =
       required String id,
       required String email,
       required String username,
+      Value<String> fullName,
       Value<String?> phone,
+      Value<String> role,
+      Value<String?> kycStatus,
+      Value<String?> nik,
+      Value<String?> province,
+      Value<String?> city,
+      Value<String?> district,
+      Value<String?> village,
+      Value<String?> postalCode,
+      Value<String?> rt,
+      Value<String?> rw,
+      Value<String?> ktpPhotoUrl,
+      Value<String?> profilePhotoUrl,
+      Value<String?> kycFaceUrl,
+      Value<String?> gender,
       Value<String?> publicKeyB64,
-      Value<String?> pinHash,
+      Value<bool> isDirty,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1509,9 +2365,24 @@ typedef $$UsersTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> email,
       Value<String> username,
+      Value<String> fullName,
       Value<String?> phone,
+      Value<String> role,
+      Value<String?> kycStatus,
+      Value<String?> nik,
+      Value<String?> province,
+      Value<String?> city,
+      Value<String?> district,
+      Value<String?> village,
+      Value<String?> postalCode,
+      Value<String?> rt,
+      Value<String?> rw,
+      Value<String?> ktpPhotoUrl,
+      Value<String?> profilePhotoUrl,
+      Value<String?> kycFaceUrl,
+      Value<String?> gender,
       Value<String?> publicKeyB64,
-      Value<String?> pinHash,
+      Value<bool> isDirty,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -1539,8 +2410,83 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get fullName => $composableBuilder(
+    column: $table.fullName,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get phone => $composableBuilder(
     column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kycStatus => $composableBuilder(
+    column: $table.kycStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nik => $composableBuilder(
+    column: $table.nik,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get district => $composableBuilder(
+    column: $table.district,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get village => $composableBuilder(
+    column: $table.village,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get postalCode => $composableBuilder(
+    column: $table.postalCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rt => $composableBuilder(
+    column: $table.rt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rw => $composableBuilder(
+    column: $table.rw,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ktpPhotoUrl => $composableBuilder(
+    column: $table.ktpPhotoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get profilePhotoUrl => $composableBuilder(
+    column: $table.profilePhotoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kycFaceUrl => $composableBuilder(
+    column: $table.kycFaceUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gender => $composableBuilder(
+    column: $table.gender,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1549,8 +2495,8 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get pinHash => $composableBuilder(
-    column: $table.pinHash,
+  ColumnFilters<bool> get isDirty => $composableBuilder(
+    column: $table.isDirty,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1584,8 +2530,83 @@ class $$UsersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get fullName => $composableBuilder(
+    column: $table.fullName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get phone => $composableBuilder(
     column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kycStatus => $composableBuilder(
+    column: $table.kycStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nik => $composableBuilder(
+    column: $table.nik,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get district => $composableBuilder(
+    column: $table.district,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get village => $composableBuilder(
+    column: $table.village,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get postalCode => $composableBuilder(
+    column: $table.postalCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rt => $composableBuilder(
+    column: $table.rt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rw => $composableBuilder(
+    column: $table.rw,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ktpPhotoUrl => $composableBuilder(
+    column: $table.ktpPhotoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get profilePhotoUrl => $composableBuilder(
+    column: $table.profilePhotoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kycFaceUrl => $composableBuilder(
+    column: $table.kycFaceUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gender => $composableBuilder(
+    column: $table.gender,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1594,8 +2615,8 @@ class $$UsersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get pinHash => $composableBuilder(
-    column: $table.pinHash,
+  ColumnOrderings<bool> get isDirty => $composableBuilder(
+    column: $table.isDirty,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1623,16 +2644,69 @@ class $$UsersTableAnnotationComposer
   GeneratedColumn<String> get username =>
       $composableBuilder(column: $table.username, builder: (column) => column);
 
+  GeneratedColumn<String> get fullName =>
+      $composableBuilder(column: $table.fullName, builder: (column) => column);
+
   GeneratedColumn<String> get phone =>
       $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get kycStatus =>
+      $composableBuilder(column: $table.kycStatus, builder: (column) => column);
+
+  GeneratedColumn<String> get nik =>
+      $composableBuilder(column: $table.nik, builder: (column) => column);
+
+  GeneratedColumn<String> get province =>
+      $composableBuilder(column: $table.province, builder: (column) => column);
+
+  GeneratedColumn<String> get city =>
+      $composableBuilder(column: $table.city, builder: (column) => column);
+
+  GeneratedColumn<String> get district =>
+      $composableBuilder(column: $table.district, builder: (column) => column);
+
+  GeneratedColumn<String> get village =>
+      $composableBuilder(column: $table.village, builder: (column) => column);
+
+  GeneratedColumn<String> get postalCode => $composableBuilder(
+    column: $table.postalCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rt =>
+      $composableBuilder(column: $table.rt, builder: (column) => column);
+
+  GeneratedColumn<String> get rw =>
+      $composableBuilder(column: $table.rw, builder: (column) => column);
+
+  GeneratedColumn<String> get ktpPhotoUrl => $composableBuilder(
+    column: $table.ktpPhotoUrl,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get profilePhotoUrl => $composableBuilder(
+    column: $table.profilePhotoUrl,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get kycFaceUrl => $composableBuilder(
+    column: $table.kycFaceUrl,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get gender =>
+      $composableBuilder(column: $table.gender, builder: (column) => column);
 
   GeneratedColumn<String> get publicKeyB64 => $composableBuilder(
     column: $table.publicKeyB64,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get pinHash =>
-      $composableBuilder(column: $table.pinHash, builder: (column) => column);
+  GeneratedColumn<bool> get isDirty =>
+      $composableBuilder(column: $table.isDirty, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1669,18 +2743,48 @@ class $$UsersTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> email = const Value.absent(),
                 Value<String> username = const Value.absent(),
+                Value<String> fullName = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String?> kycStatus = const Value.absent(),
+                Value<String?> nik = const Value.absent(),
+                Value<String?> province = const Value.absent(),
+                Value<String?> city = const Value.absent(),
+                Value<String?> district = const Value.absent(),
+                Value<String?> village = const Value.absent(),
+                Value<String?> postalCode = const Value.absent(),
+                Value<String?> rt = const Value.absent(),
+                Value<String?> rw = const Value.absent(),
+                Value<String?> ktpPhotoUrl = const Value.absent(),
+                Value<String?> profilePhotoUrl = const Value.absent(),
+                Value<String?> kycFaceUrl = const Value.absent(),
+                Value<String?> gender = const Value.absent(),
                 Value<String?> publicKeyB64 = const Value.absent(),
-                Value<String?> pinHash = const Value.absent(),
+                Value<bool> isDirty = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UsersCompanion(
                 id: id,
                 email: email,
                 username: username,
+                fullName: fullName,
                 phone: phone,
+                role: role,
+                kycStatus: kycStatus,
+                nik: nik,
+                province: province,
+                city: city,
+                district: district,
+                village: village,
+                postalCode: postalCode,
+                rt: rt,
+                rw: rw,
+                ktpPhotoUrl: ktpPhotoUrl,
+                profilePhotoUrl: profilePhotoUrl,
+                kycFaceUrl: kycFaceUrl,
+                gender: gender,
                 publicKeyB64: publicKeyB64,
-                pinHash: pinHash,
+                isDirty: isDirty,
                 createdAt: createdAt,
                 rowid: rowid,
               ),
@@ -1689,18 +2793,48 @@ class $$UsersTableTableManager
                 required String id,
                 required String email,
                 required String username,
+                Value<String> fullName = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String?> kycStatus = const Value.absent(),
+                Value<String?> nik = const Value.absent(),
+                Value<String?> province = const Value.absent(),
+                Value<String?> city = const Value.absent(),
+                Value<String?> district = const Value.absent(),
+                Value<String?> village = const Value.absent(),
+                Value<String?> postalCode = const Value.absent(),
+                Value<String?> rt = const Value.absent(),
+                Value<String?> rw = const Value.absent(),
+                Value<String?> ktpPhotoUrl = const Value.absent(),
+                Value<String?> profilePhotoUrl = const Value.absent(),
+                Value<String?> kycFaceUrl = const Value.absent(),
+                Value<String?> gender = const Value.absent(),
                 Value<String?> publicKeyB64 = const Value.absent(),
-                Value<String?> pinHash = const Value.absent(),
+                Value<bool> isDirty = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UsersCompanion.insert(
                 id: id,
                 email: email,
                 username: username,
+                fullName: fullName,
                 phone: phone,
+                role: role,
+                kycStatus: kycStatus,
+                nik: nik,
+                province: province,
+                city: city,
+                district: district,
+                village: village,
+                postalCode: postalCode,
+                rt: rt,
+                rw: rw,
+                ktpPhotoUrl: ktpPhotoUrl,
+                profilePhotoUrl: profilePhotoUrl,
+                kycFaceUrl: kycFaceUrl,
+                gender: gender,
                 publicKeyB64: publicKeyB64,
-                pinHash: pinHash,
+                isDirty: isDirty,
                 createdAt: createdAt,
                 rowid: rowid,
               ),
@@ -2002,6 +3136,8 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       required int amountCent,
       Value<int> hopCount,
       Value<String> syncStatus,
+      Value<String?> counterpartyName,
+      Value<String?> counterpartyId,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -2014,6 +3150,8 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<int> amountCent,
       Value<int> hopCount,
       Value<String> syncStatus,
+      Value<String?> counterpartyName,
+      Value<String?> counterpartyId,
       Value<DateTime> createdAt,
       Value<int> rowid,
     });
@@ -2059,6 +3197,16 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get syncStatus => $composableBuilder(
     column: $table.syncStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get counterpartyName => $composableBuilder(
+    column: $table.counterpartyName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get counterpartyId => $composableBuilder(
+    column: $table.counterpartyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2112,6 +3260,16 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get counterpartyName => $composableBuilder(
+    column: $table.counterpartyName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get counterpartyId => $composableBuilder(
+    column: $table.counterpartyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2149,6 +3307,16 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get syncStatus => $composableBuilder(
     column: $table.syncStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get counterpartyName => $composableBuilder(
+    column: $table.counterpartyName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get counterpartyId => $composableBuilder(
+    column: $table.counterpartyId,
     builder: (column) => column,
   );
 
@@ -2194,6 +3362,8 @@ class $$TransactionsTableTableManager
                 Value<int> amountCent = const Value.absent(),
                 Value<int> hopCount = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<String?> counterpartyName = const Value.absent(),
+                Value<String?> counterpartyId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion(
@@ -2204,6 +3374,8 @@ class $$TransactionsTableTableManager
                 amountCent: amountCent,
                 hopCount: hopCount,
                 syncStatus: syncStatus,
+                counterpartyName: counterpartyName,
+                counterpartyId: counterpartyId,
                 createdAt: createdAt,
                 rowid: rowid,
               ),
@@ -2216,6 +3388,8 @@ class $$TransactionsTableTableManager
                 required int amountCent,
                 Value<int> hopCount = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<String?> counterpartyName = const Value.absent(),
+                Value<String?> counterpartyId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion.insert(
@@ -2226,6 +3400,8 @@ class $$TransactionsTableTableManager
                 amountCent: amountCent,
                 hopCount: hopCount,
                 syncStatus: syncStatus,
+                counterpartyName: counterpartyName,
+                counterpartyId: counterpartyId,
                 createdAt: createdAt,
                 rowid: rowid,
               ),

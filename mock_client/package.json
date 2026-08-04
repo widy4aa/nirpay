@@ -1,0 +1,21 @@
+{
+  "name": "mock_client",
+  "version": "1.0.0",
+  "description": "Mock sender & receiver untuk test transfer NirPay.",
+  "main": "bc_mock.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "@abandonware/bleno": "^0.6.2",
+    "@abandonware/noble": "^1.9.2-26"
+  },
+  "allowScripts": {
+    "@abandonware/bleno@0.6.2": true,
+    "@abandonware/bluetooth-hci-socket@0.5.3-12": true,
+    "usb@2.18.0": true,
+    "@abandonware/noble@1.9.2-26": true
+  }
+}

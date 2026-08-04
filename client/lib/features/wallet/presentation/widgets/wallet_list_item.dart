@@ -14,7 +14,7 @@ class WalletListItem extends StatelessWidget {
         title: Text(item.title),
         subtitle: Text('Created: ${item.createdAt.toLocal()}'),
         trailing: IconButton(
-          icon: const Icon(Icons.delete_outline),
+          icon: Icon(Icons.delete_outline),
           onPressed: onDelete,
         ),
       ),

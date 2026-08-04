@@ -24,7 +24,25 @@ mixin _$UserModel {
   String get id => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get fullName => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
+  String? get phone => throw _privateConstructorUsedError;
+  String? get pinHash => throw _privateConstructorUsedError;
+  String? get nik => throw _privateConstructorUsedError;
+  String? get province => throw _privateConstructorUsedError;
+  String? get city => throw _privateConstructorUsedError;
+  String? get district => throw _privateConstructorUsedError;
+  String? get village => throw _privateConstructorUsedError;
+  String? get postalCode => throw _privateConstructorUsedError;
+  String? get rt => throw _privateConstructorUsedError;
+  String? get rw => throw _privateConstructorUsedError;
+  String? get ktpPhotoUrl => throw _privateConstructorUsedError;
+  String? get profilePhotoUrl => throw _privateConstructorUsedError;
+  String? get kycFaceUrl => throw _privateConstructorUsedError;
+  String? get kycStatus => throw _privateConstructorUsedError;
+  String? get publicKeyB64 => throw _privateConstructorUsedError;
+  String? get gender => throw _privateConstructorUsedError;
+  String? get birthDate => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +59,30 @@ abstract class $UserModelCopyWith<$Res> {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) then) =
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
-  $Res call({String id, String email, String fullName, String role});
+  $Res call({
+    String id,
+    String email,
+    String fullName,
+    String username,
+    String role,
+    String? phone,
+    String? pinHash,
+    String? nik,
+    String? province,
+    String? city,
+    String? district,
+    String? village,
+    String? postalCode,
+    String? rt,
+    String? rw,
+    String? ktpPhotoUrl,
+    String? profilePhotoUrl,
+    String? kycFaceUrl,
+    String? kycStatus,
+    String? publicKeyB64,
+    String? gender,
+    String? birthDate,
+  });
 }
 
 /// @nodoc
@@ -62,7 +103,25 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? id = null,
     Object? email = null,
     Object? fullName = null,
+    Object? username = null,
     Object? role = null,
+    Object? phone = freezed,
+    Object? pinHash = freezed,
+    Object? nik = freezed,
+    Object? province = freezed,
+    Object? city = freezed,
+    Object? district = freezed,
+    Object? village = freezed,
+    Object? postalCode = freezed,
+    Object? rt = freezed,
+    Object? rw = freezed,
+    Object? ktpPhotoUrl = freezed,
+    Object? profilePhotoUrl = freezed,
+    Object? kycFaceUrl = freezed,
+    Object? kycStatus = freezed,
+    Object? publicKeyB64 = freezed,
+    Object? gender = freezed,
+    Object? birthDate = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -78,10 +137,82 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.fullName
                 : fullName // ignore: cast_nullable_to_non_nullable
                       as String,
+            username: null == username
+                ? _value.username
+                : username // ignore: cast_nullable_to_non_nullable
+                      as String,
             role: null == role
                 ? _value.role
                 : role // ignore: cast_nullable_to_non_nullable
                       as String,
+            phone: freezed == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pinHash: freezed == pinHash
+                ? _value.pinHash
+                : pinHash // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            nik: freezed == nik
+                ? _value.nik
+                : nik // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            province: freezed == province
+                ? _value.province
+                : province // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            city: freezed == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            district: freezed == district
+                ? _value.district
+                : district // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            village: freezed == village
+                ? _value.village
+                : village // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            postalCode: freezed == postalCode
+                ? _value.postalCode
+                : postalCode // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rt: freezed == rt
+                ? _value.rt
+                : rt // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rw: freezed == rw
+                ? _value.rw
+                : rw // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            ktpPhotoUrl: freezed == ktpPhotoUrl
+                ? _value.ktpPhotoUrl
+                : ktpPhotoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            profilePhotoUrl: freezed == profilePhotoUrl
+                ? _value.profilePhotoUrl
+                : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            kycFaceUrl: freezed == kycFaceUrl
+                ? _value.kycFaceUrl
+                : kycFaceUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            kycStatus: freezed == kycStatus
+                ? _value.kycStatus
+                : kycStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            publicKeyB64: freezed == publicKeyB64
+                ? _value.publicKeyB64
+                : publicKeyB64 // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            gender: freezed == gender
+                ? _value.gender
+                : gender // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            birthDate: freezed == birthDate
+                ? _value.birthDate
+                : birthDate // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -97,7 +228,30 @@ abstract class _$$UserModelImplCopyWith<$Res>
   ) = __$$UserModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String email, String fullName, String role});
+  $Res call({
+    String id,
+    String email,
+    String fullName,
+    String username,
+    String role,
+    String? phone,
+    String? pinHash,
+    String? nik,
+    String? province,
+    String? city,
+    String? district,
+    String? village,
+    String? postalCode,
+    String? rt,
+    String? rw,
+    String? ktpPhotoUrl,
+    String? profilePhotoUrl,
+    String? kycFaceUrl,
+    String? kycStatus,
+    String? publicKeyB64,
+    String? gender,
+    String? birthDate,
+  });
 }
 
 /// @nodoc
@@ -117,7 +271,25 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? email = null,
     Object? fullName = null,
+    Object? username = null,
     Object? role = null,
+    Object? phone = freezed,
+    Object? pinHash = freezed,
+    Object? nik = freezed,
+    Object? province = freezed,
+    Object? city = freezed,
+    Object? district = freezed,
+    Object? village = freezed,
+    Object? postalCode = freezed,
+    Object? rt = freezed,
+    Object? rw = freezed,
+    Object? ktpPhotoUrl = freezed,
+    Object? profilePhotoUrl = freezed,
+    Object? kycFaceUrl = freezed,
+    Object? kycStatus = freezed,
+    Object? publicKeyB64 = freezed,
+    Object? gender = freezed,
+    Object? birthDate = freezed,
   }) {
     return _then(
       _$UserModelImpl(
@@ -133,10 +305,82 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.fullName
             : fullName // ignore: cast_nullable_to_non_nullable
                   as String,
+        username: null == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                  as String,
         role: null == role
             ? _value.role
             : role // ignore: cast_nullable_to_non_nullable
                   as String,
+        phone: freezed == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pinHash: freezed == pinHash
+            ? _value.pinHash
+            : pinHash // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        nik: freezed == nik
+            ? _value.nik
+            : nik // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        province: freezed == province
+            ? _value.province
+            : province // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        city: freezed == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        district: freezed == district
+            ? _value.district
+            : district // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        village: freezed == village
+            ? _value.village
+            : village // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        postalCode: freezed == postalCode
+            ? _value.postalCode
+            : postalCode // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rt: freezed == rt
+            ? _value.rt
+            : rt // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rw: freezed == rw
+            ? _value.rw
+            : rw // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        ktpPhotoUrl: freezed == ktpPhotoUrl
+            ? _value.ktpPhotoUrl
+            : ktpPhotoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        profilePhotoUrl: freezed == profilePhotoUrl
+            ? _value.profilePhotoUrl
+            : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        kycFaceUrl: freezed == kycFaceUrl
+            ? _value.kycFaceUrl
+            : kycFaceUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        kycStatus: freezed == kycStatus
+            ? _value.kycStatus
+            : kycStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        publicKeyB64: freezed == publicKeyB64
+            ? _value.publicKeyB64
+            : publicKeyB64 // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        gender: freezed == gender
+            ? _value.gender
+            : gender // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        birthDate: freezed == birthDate
+            ? _value.birthDate
+            : birthDate // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -149,7 +393,25 @@ class _$UserModelImpl implements _UserModel {
     required this.id,
     required this.email,
     required this.fullName,
+    required this.username,
     required this.role,
+    this.phone,
+    this.pinHash,
+    this.nik,
+    this.province,
+    this.city,
+    this.district,
+    this.village,
+    this.postalCode,
+    this.rt,
+    this.rw,
+    this.ktpPhotoUrl,
+    this.profilePhotoUrl,
+    this.kycFaceUrl,
+    this.kycStatus,
+    this.publicKeyB64,
+    this.gender,
+    this.birthDate,
   });
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -162,11 +424,47 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String fullName;
   @override
+  final String username;
+  @override
   final String role;
+  @override
+  final String? phone;
+  @override
+  final String? pinHash;
+  @override
+  final String? nik;
+  @override
+  final String? province;
+  @override
+  final String? city;
+  @override
+  final String? district;
+  @override
+  final String? village;
+  @override
+  final String? postalCode;
+  @override
+  final String? rt;
+  @override
+  final String? rw;
+  @override
+  final String? ktpPhotoUrl;
+  @override
+  final String? profilePhotoUrl;
+  @override
+  final String? kycFaceUrl;
+  @override
+  final String? kycStatus;
+  @override
+  final String? publicKeyB64;
+  @override
+  final String? gender;
+  @override
+  final String? birthDate;
 
   @override
   String toString() {
-    return 'UserModel(id: $id, email: $email, fullName: $fullName, role: $role)';
+    return 'UserModel(id: $id, email: $email, fullName: $fullName, username: $username, role: $role, phone: $phone, pinHash: $pinHash, nik: $nik, province: $province, city: $city, district: $district, village: $village, postalCode: $postalCode, rt: $rt, rw: $rw, ktpPhotoUrl: $ktpPhotoUrl, profilePhotoUrl: $profilePhotoUrl, kycFaceUrl: $kycFaceUrl, kycStatus: $kycStatus, publicKeyB64: $publicKeyB64, gender: $gender, birthDate: $birthDate)';
   }
 
   @override
@@ -178,12 +476,64 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            (identical(other.role, role) || other.role == role));
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.pinHash, pinHash) || other.pinHash == pinHash) &&
+            (identical(other.nik, nik) || other.nik == nik) &&
+            (identical(other.province, province) ||
+                other.province == province) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.district, district) ||
+                other.district == district) &&
+            (identical(other.village, village) || other.village == village) &&
+            (identical(other.postalCode, postalCode) ||
+                other.postalCode == postalCode) &&
+            (identical(other.rt, rt) || other.rt == rt) &&
+            (identical(other.rw, rw) || other.rw == rw) &&
+            (identical(other.ktpPhotoUrl, ktpPhotoUrl) ||
+                other.ktpPhotoUrl == ktpPhotoUrl) &&
+            (identical(other.profilePhotoUrl, profilePhotoUrl) ||
+                other.profilePhotoUrl == profilePhotoUrl) &&
+            (identical(other.kycFaceUrl, kycFaceUrl) ||
+                other.kycFaceUrl == kycFaceUrl) &&
+            (identical(other.kycStatus, kycStatus) ||
+                other.kycStatus == kycStatus) &&
+            (identical(other.publicKeyB64, publicKeyB64) ||
+                other.publicKeyB64 == publicKeyB64) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, email, fullName, role);
+  int get hashCode => Object.hashAll([
+    runtimeType,
+    id,
+    email,
+    fullName,
+    username,
+    role,
+    phone,
+    pinHash,
+    nik,
+    province,
+    city,
+    district,
+    village,
+    postalCode,
+    rt,
+    rw,
+    ktpPhotoUrl,
+    profilePhotoUrl,
+    kycFaceUrl,
+    kycStatus,
+    publicKeyB64,
+    gender,
+    birthDate,
+  ]);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -204,7 +554,25 @@ abstract class _UserModel implements UserModel {
     required final String id,
     required final String email,
     required final String fullName,
+    required final String username,
     required final String role,
+    final String? phone,
+    final String? pinHash,
+    final String? nik,
+    final String? province,
+    final String? city,
+    final String? district,
+    final String? village,
+    final String? postalCode,
+    final String? rt,
+    final String? rw,
+    final String? ktpPhotoUrl,
+    final String? profilePhotoUrl,
+    final String? kycFaceUrl,
+    final String? kycStatus,
+    final String? publicKeyB64,
+    final String? gender,
+    final String? birthDate,
   }) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
@@ -217,7 +585,43 @@ abstract class _UserModel implements UserModel {
   @override
   String get fullName;
   @override
+  String get username;
+  @override
   String get role;
+  @override
+  String? get phone;
+  @override
+  String? get pinHash;
+  @override
+  String? get nik;
+  @override
+  String? get province;
+  @override
+  String? get city;
+  @override
+  String? get district;
+  @override
+  String? get village;
+  @override
+  String? get postalCode;
+  @override
+  String? get rt;
+  @override
+  String? get rw;
+  @override
+  String? get ktpPhotoUrl;
+  @override
+  String? get profilePhotoUrl;
+  @override
+  String? get kycFaceUrl;
+  @override
+  String? get kycStatus;
+  @override
+  String? get publicKeyB64;
+  @override
+  String? get gender;
+  @override
+  String? get birthDate;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.

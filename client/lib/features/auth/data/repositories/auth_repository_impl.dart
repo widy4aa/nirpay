@@ -20,10 +20,11 @@ class AuthRepositoryImpl implements AuthRepository {
       _logger.d('[Auth] Registering user: ${params.email}');
       final data = await _remoteDatasource.register(params.toJson());
       // The register endpoint might not return the full user, just userId and tokens.
-      // Assuming it returns userId, we can just create a dummy User for now or get from data.
+      // Assuming it returns userId, we can just create a User from params.
       final user = User(
         id: data['userId'],
         email: params.email,
+        fullName: params.fullName,
         username: params.username,
         role: 'USER',
       );
@@ -44,14 +45,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthTokens>> login(String email, String pin) async {
+  Future<Either<Failure, AuthTokens>> login(
+    String email,
+    String password,
+  ) async {
     try {
       _logger.d('[Auth] Logging in: $email');
-      final data = await _remoteDatasource.login(email, pin);
-      final userModel = UserModel.fromJson(data['user']);
+      final data = await _remoteDatasource.login(email, password);
+      final userModel = UserModel.fromJson(data.user);
       final tokens = AuthTokens(
-        accessToken: data['accessToken'],
-        refreshToken: data['refreshToken'],
+        accessToken: data.tokens['accessToken'],
+        refreshToken: data.tokens['refreshToken'],
         user: userModel.toEntity(),
       );
       return Right(tokens);
@@ -65,6 +69,36 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     } catch (e) {
       _logger.e('[Auth] Login cache/parsing error', error: e);
+      return Left(CacheFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthTokens>> verifyPin(
+    String pin,
+    String refreshToken,
+  ) async {
+    try {
+      _logger.d('[Auth] Verifying PIN');
+      final data = await _remoteDatasource.verifyPin(pin, refreshToken);
+      return Right(
+        AuthTokens(
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          user: UserModel.fromJson(data.user).toEntity(),
+        ),
+      );
+    } on DioException catch (e) {
+      _logger.e('[Auth] Verify PIN failed', error: e, stackTrace: e.stackTrace);
+      return Left(
+        ServerFailure(
+          message:
+              e.response?.data?['message'] ?? e.message ?? 'Verify PIN failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
+    } catch (e) {
+      _logger.e('[Auth] Verify PIN error', error: e);
       return Left(CacheFailure(message: e.toString()));
     }
   }
@@ -99,7 +133,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       _logger.d('[Auth] Verifying OTP: $otpId');
       final data = await _remoteDatasource.verifyOtp(otpId, otpCode);
-      return Right(data['success'] == true);
+      return Right(data['verified'] == true);
     } on DioException catch (e) {
       _logger.e('[Auth] Verify OTP failed', error: e, stackTrace: e.stackTrace);
       return Left(

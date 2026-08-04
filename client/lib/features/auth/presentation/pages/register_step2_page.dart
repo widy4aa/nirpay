@@ -9,7 +9,7 @@ import '../controllers/auth_controller.dart';
 import '../providers/registration_form_provider.dart';
 
 class RegisterStep2Page extends ConsumerStatefulWidget {
-  const RegisterStep2Page({super.key});
+  RegisterStep2Page({super.key});
 
   @override
   ConsumerState<RegisterStep2Page> createState() => _RegisterStep2PageState();
@@ -24,8 +24,8 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     6,
     (index) => FocusNode(),
   );
-  int _resendTimer = 30;
   Timer? _timer;
+  final _timerNotifier = ValueNotifier<int>(30);
 
   @override
   void initState() {
@@ -46,22 +46,18 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+          SnackBar(content: Text(e.toString()), backgroundColor: context.colors.error),
         );
       }
     }
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_resendTimer == 0) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_timerNotifier.value == 0) {
         timer.cancel();
       } else {
-        if (mounted) {
-          setState(() {
-            _resendTimer--;
-          });
-        }
+        _timerNotifier.value--;
       }
     });
   }
@@ -75,6 +71,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
       node.dispose();
     }
     _timer?.cancel();
+    _timerNotifier.dispose();
     super.dispose();
   }
 
@@ -82,7 +79,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     final code = _controllers.map((c) => c.text).join();
     if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Masukkan 6 digit OTP'), backgroundColor: AppColors.error),
+        SnackBar(content: Text('Masukkan 6 digit OTP'), backgroundColor: context.colors.error),
       );
       return;
     }
@@ -90,15 +87,30 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     final formState = ref.read(registrationFormProvider);
     final otpId = formState.otpId;
 
+    if (otpId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP belum dikirim. Silakan tunggu atau kirim ulang.'), backgroundColor: context.colors.error),
+      );
+      return;
+    }
+
     try {
-      await ref.read(authControllerProvider.notifier).verifyOtp(otpId, code);
-      if (mounted) {
+      final success = await ref.read(authControllerProvider.notifier).verifyOtp(otpId, code);
+      if (success && mounted) {
         context.pushNamed(AppRouteNames.registerStep3);
+      } else if (mounted) {
+        final authState = ref.read(authControllerProvider);
+        final errorMsg = authState.hasError
+            ? authState.error.toString()
+            : 'Kode OTP salah. Silakan coba lagi.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMsg), backgroundColor: context.colors.error),
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+          SnackBar(content: Text(e.toString()), backgroundColor: context.colors.error),
         );
       }
     }
@@ -111,7 +123,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     final formState = ref.watch(registrationFormProvider);
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: AppGradients.background,
       ),
       child: Scaffold(
@@ -123,27 +135,25 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildProgressBar(),
-                          const SizedBox(height: 32),
-                          _buildHeader(formState.email),
-                          const SizedBox(height: 32),
-                          _buildOtpForm(),
-                          const Spacer(),
-                          _buildResendSection(),
-                          const SizedBox(height: 24),
-                          _buildNextButton(context, isLoading),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 16.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildProgressBar(),
+                        const SizedBox(height: 32),
+                        _buildHeader(formState.email),
+                        const SizedBox(height: 32),
+                        _buildOtpForm(),
+                        const SizedBox(height: 32),
+                        _buildResendSection(),
+                        const SizedBox(height: 24),
+                        _buildNextButton(context, isLoading),
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
                 ),
@@ -161,15 +171,15 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+        icon: Icon(Icons.arrow_back_rounded, color: context.colors.textPrimary),
         onPressed: () => context.pop(),
       ),
-      title: const Text(
+      title: Text(
         'Registrasi',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: context.colors.textPrimary,
         ),
       ),
     );
@@ -179,15 +189,15 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Langkah 2 dari 5',
+        Text(
+          'Langkah 2 dari 9',
           style: TextStyle(
-            color: AppColors.primary,
+            color: context.colors.primary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -195,18 +205,18 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: context.colors.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Expanded(
-              flex: 3,
+              flex: 7,
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.border,
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -221,27 +231,27 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Masukkan Kode OTP\nAnda Disini',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
             height: 1.3,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         RichText(
           text: TextSpan(
-            style: const TextStyle(
-                fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+            style: TextStyle(
+                fontSize: 14, color: context.colors.textSecondary, height: 1.5),
             children: [
-              const TextSpan(text: 'Masukkan 6 digit kode OTP yang kami\nkirimkan ke '),
+              TextSpan(text: 'Masukkan 6 digit kode OTP yang kami\nkirimkan ke '),
               TextSpan(
                 text: email.isNotEmpty ? email : 'email anda',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
@@ -264,26 +274,26 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             maxLength: 1,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
             ),
             decoration: InputDecoration(
               counterText: '',
               filled: true,
-              fillColor: AppColors.surface,
+              fillColor: context.colors.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: context.colors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: context.colors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                borderSide: BorderSide(color: context.colors.primary, width: 1.5),
               ),
             ),
             onChanged: (value) {
@@ -302,35 +312,38 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
   Widget _buildResendSection() {
     return Column(
       children: [
-        const Text(
+        Text(
           'Belum menerima kode OTP?',
           style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         GestureDetector(
-          onTap: _resendTimer == 0
+          onTap: _timerNotifier.value == 0
               ? () {
-                  setState(() {
-                    _resendTimer = 30;
-                  });
+                  _timerNotifier.value = 30;
                   _startTimer();
                   _sendOtp();
                 }
               : null,
-          child: Text(
-            _resendTimer > 0
-                ? 'Kirim Ulang ($_resendTimer s)'
-                : 'Kirim Ulang Kode OTP',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: _resendTimer > 0
-                  ? AppColors.textSecondary
-                  : AppColors.primary,
-            ),
+          child: ValueListenableBuilder<int>(
+            valueListenable: _timerNotifier,
+            builder: (context, timer, _) {
+              return Text(
+                timer > 0
+                    ? 'Kirim Ulang ($timer s)'
+                    : 'Kirim Ulang Kode OTP',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: timer > 0
+                      ? context.colors.textSecondary
+                      : context.colors.primary,
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -341,7 +354,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
     return ElevatedButton(
       onPressed: isLoading ? null : _onNext,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.colors.primary,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
@@ -354,7 +367,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
               height: 20, width: 20, 
               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             )
-          : const Text(
+          : Text(
               'Lanjutkan',
               style: TextStyle(
                 fontSize: 16,
