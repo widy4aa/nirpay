@@ -1,0 +1,48 @@
+name: Flutter Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Workflow akan berjalan ketika ada push tag yang diawali dengan 'v' (contoh: v1.0.0)
+  workflow_dispatch: # Memungkinkan kamu menjalankan workflow secara manual dari GitHub
+
+permissions:
+  contents: write # Diperlukan untuk membuat rilis
+
+jobs:
+  build:
+    name: Build & Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        working-directory: ./client
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: ./client
+        run: flutter build apk --release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: client/build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
