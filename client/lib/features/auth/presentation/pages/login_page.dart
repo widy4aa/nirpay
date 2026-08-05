@@ -121,16 +121,40 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     // 2. Login ke server (hanya email + password)
     try {
-      await ref.read(authControllerProvider.notifier).login(
+      final deviceChanged = await ref.read(authControllerProvider.notifier).login(
         email,
         _passwordController.text,
       );
 
       FlowLogger.success('Login berhasil');
 
+      // Notifikasi jika device berbeda
+      if (deviceChanged && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.phone_android_rounded, color: Colors.white, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text('Login dari device baru. Session di device lama telah dihapus.'),
+                ),
+              ],
+            ),
+            backgroundColor: context.colors.warning,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+
       // Cek apakah sudah ada pinHash tersimpan
       final storage = ref.read(secureStorageProvider);
       final savedPinHash = await storage.read('saved_pin_hash');
+
+      // Beri waktu UI untuk settle sebelum transisi
+      await Future.delayed(const Duration(milliseconds: 300));
 
       if (mounted) {
         if (savedPinHash != null && savedPinHash.isNotEmpty) {

@@ -28,6 +28,48 @@ import 'package:nirpay/features/wallet/presentation/pages/device_status_page.dar
 import 'package:nirpay/features/wallet/presentation/pages/home_page.dart';
 import 'package:nirpay/shared/widgets/app_shell.dart';
 
+// ─── Custom Transition Helpers ───
+
+/// Fade transition untuk tab navigation (Home ↔ History ↔ Settings)
+Page<T> _fadePage<T>(Widget child, GoRouterState state) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 200),
+  );
+}
+
+/// Slide from right untuk push navigation (Kirim, Top Up, dll)
+Page<T> _slideFromRightPage<T>(Widget child, GoRouterState state) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+          .chain(CurveTween(curve: Curves.easeOutCubic));
+      return SlideTransition(position: animation.drive(tween), child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}
+
+/// Slide from bottom untuk modal-like pages (NFC, Receive, dll)
+Page<T> _slideFromBottomPage<T>(Widget child, GoRouterState state) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero)
+          .chain(CurveTween(curve: Curves.easeOutCubic));
+      return SlideTransition(position: animation.drive(tween), child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 350),
+  );
+}
+
 class AppRoutePaths {
   static const String wallet = '/wallet';
   static const String history = '/history';
@@ -183,74 +225,79 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => RegisterStep9Page(),
       ),
       ShellRoute(
-        builder: (context, state, child) => AppShell(child: child),
+        pageBuilder: (context, state, child) {
+          return _fadePage(AppShell(child: child), state);
+        },
         routes: [
           GoRoute(
             path: AppRoutePaths.wallet,
             name: AppRouteNames.wallet,
-            builder: (context, state) => HomePage(),
+            pageBuilder: (context, state) => _fadePage(HomePage(), state),
           ),
           GoRoute(
             path: AppRoutePaths.history,
             name: AppRouteNames.history,
-            builder: (context, state) => HistoryPage(),
+            pageBuilder: (context, state) => _fadePage(HistoryPage(), state),
           ),
           GoRoute(
             path: AppRoutePaths.settings,
             name: AppRouteNames.settings,
-            builder: (context, state) => SettingsPage(),
+            pageBuilder: (context, state) => _fadePage(SettingsPage(), state),
           ),
         ],
       ),
+      // ─── Slide from right (push pages) ───
       GoRoute(
         path: AppRoutePaths.sendMoney,
         name: AppRouteNames.sendMoney,
-        builder: (context, state) => SendMoneyPage(),
-      ),
-      GoRoute(
-        path: AppRoutePaths.nfcTransfer,
-        name: AppRouteNames.nfcTransfer,
-        builder: (context, state) => NfcTransferPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(SendMoneyPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.statusSync,
         name: AppRouteNames.statusSync,
-        builder: (context, state) => StatusSyncPage(),
-      ),
-      GoRoute(
-        path: AppRoutePaths.receiveMoney,
-        name: AppRouteNames.receiveMoney,
-        builder: (context, state) => ReceiveMoneyPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(StatusSyncPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.deviceStatus,
         name: AppRouteNames.deviceStatus,
-        builder: (context, state) => DeviceStatusPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(DeviceStatusPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.personalInfo,
         name: AppRouteNames.personalInfo,
-        builder: (context, state) => PersonalInfoPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(PersonalInfoPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.editProfile,
         name: AppRouteNames.editProfile,
-        builder: (context, state) => EditProfilePage(),
+        pageBuilder: (context, state) => _slideFromRightPage(EditProfilePage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.topUp,
         name: AppRouteNames.topUp,
-        builder: (context, state) => TopUpPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(TopUpPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.withdraw,
         name: AppRouteNames.withdraw,
-        builder: (context, state) => WithdrawPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(WithdrawPage(), state),
       ),
       GoRoute(
         path: AppRoutePaths.changePin,
         name: AppRouteNames.changePin,
-        builder: (context, state) => ChangePinPage(),
+        pageBuilder: (context, state) => _slideFromRightPage(ChangePinPage(), state),
+      ),
+
+      // ─── Slide from bottom (modal-like pages) ───
+      GoRoute(
+        path: AppRoutePaths.nfcTransfer,
+        name: AppRouteNames.nfcTransfer,
+        pageBuilder: (context, state) => _slideFromBottomPage(NfcTransferPage(), state),
+      ),
+      GoRoute(
+        path: AppRoutePaths.receiveMoney,
+        name: AppRouteNames.receiveMoney,
+        pageBuilder: (context, state) => _slideFromBottomPage(ReceiveMoneyPage(), state),
       ),
     ],
     errorBuilder: (context, state) => _RouterErrorPage(error: state.error),

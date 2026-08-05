@@ -6,6 +6,8 @@ import '../../../../core/config/app_config.dart';
 import '../../../../core/providers/app_providers.dart';
 
 import '../../../../core/database/database_service.dart';
+import '../../../../core/services/auto_sync_service.dart';
+import '../../../../core/services/device_service.dart';
 import '../../../../core/services/secure_storage_service.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../providers/auth_providers.dart';
@@ -99,43 +101,63 @@ class AuthController extends _$AuthController {
   }
 
   /// Login online — email + password saja, PIN tidak perlu
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     state = const AsyncLoading();
     try {
       final repo = ref.read(authRepositoryProvider);
       final storage = ref.read(secureStorageProvider);
       final userLocal = ref.read(userLocalDatasourceProvider);
-      final result = await repo.login(email, password);
+      final deviceService = ref.read(deviceServiceProvider);
+      final deviceId = deviceService.getDeviceId();
+
+      final result = await repo.login(email, password, deviceId: deviceId);
+
+      bool deviceChanged = false;
 
       await result.fold(
         (failure) => throw failure,
         (tokens) async {
-          // Simpan token di secure storage
-          await storage.write('access_token', tokens.accessToken);
-          await storage.write('refresh_token', tokens.refreshToken);
+          deviceChanged = tokens.deviceChanged;
 
-          // DEBUG: Log token yang tersimpan
-          print('🔑 [DEBUG] access_token saved: ${tokens.accessToken.substring(0, 20)}...');
-          print('🔑 [DEBUG] refresh_token saved: ${tokens.refreshToken.substring(0, 20)}...');
-
-          // Simpan pinHash untuk verifikasi PIN lokal
-          // PHP bcrypt pakai $2y$, Dart bcrypt pakai $2b$ — convert
-          if (tokens.user.pinHash != null) {
-            final hash = tokens.user.pinHash!.replaceAll(r'$2y$', r'$2b$');
-            await storage.write('saved_pin_hash', hash);
+          // Jika device berbeda, hapus data lama
+          if (deviceChanged) {
+            print('🔑 [Auth] Device changed! Clearing old local data...');
+            await storage.deleteAll();
           }
 
-          // Simpan user data lengkap ke local database
+          // Siapkan pinHash (convert PHP $2y$ → Dart $2b$)
+          String? pinHashForStorage;
+          if (tokens.user.pinHash != null) {
+            pinHashForStorage = tokens.user.pinHash!.replaceAll(r'$2y$', r'$2b$');
+          }
+
+          // Jalankan operasi storage PARALEL supaya tidak blocking
+          await Future.wait([
+            storage.write('access_token', tokens.accessToken),
+            storage.write('refresh_token', tokens.refreshToken),
+            if (pinHashForStorage != null)
+              storage.write('saved_pin_hash', pinHashForStorage),
+          ]);
+
+          // Simpan user data ke local DB
           await userLocal.saveUser(tokens.user);
 
+          // Update state setelah semua selesai
           ref.read(currentUserProvider.notifier).state = tokens.user;
         },
       );
 
       state = const AsyncData(null);
+
+      // Trigger auto sync setelah login berhasil
+      try {
+        ref.read(autoSyncServiceProvider).onLoginSuccess();
+      } catch (_) {}
+
+      return deviceChanged;
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-      rethrow; // ← Penting! Supaya login page bisa catch
+      rethrow;
     }
   }
 

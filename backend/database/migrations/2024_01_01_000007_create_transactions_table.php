@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('tx_id')->unique();
             $table->uuid('user_id');
             $table->enum('direction', ['CREDIT', 'DEBIT']);
-            $table->enum('tx_type', ['TOPUP', 'TRANSFER']);
+            $table->enum('tx_type', ['TOPUP', 'TRANSFER', 'WITHDRAW']);
             $table->decimal('amount_cent', 20, 0);
             $table->integer('hop_count')->default(0);
             $table->enum('sync_status', ['PENDING', 'SYNCED', 'REJECTED'])->default('SYNCED');

@@ -13,6 +13,7 @@ import '../../../../features/transaction/presentation/providers/transaction_prov
 import '../providers/wallet_balance_provider.dart';
 import '../../data/services/wallet_sync_service.dart';
 import '../../../sync/presentation/providers/last_sync_provider.dart';
+import '../../../../core/services/auto_sync_service.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   HomePage({super.key});
@@ -44,8 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  String get _lastSyncText {
-    final lastSync = ref.read(lastSyncProvider);
+  String _lastSyncText(DateTime? lastSync) {
     if (lastSync == null) return 'Belum pernah sync';
 
     final now = DateTime.now();
@@ -70,6 +70,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final balanceAsync = ref.watch(walletBalanceProvider);
     final user = ref.watch(currentUserProvider);
     final isOnlineAsync = ref.watch(networkConnectivityProvider);
+    final lastSync = ref.watch(lastSyncProvider);
 
     final userName = user?.fullName.isNotEmpty == true ? user!.fullName : 'User';
     final userInitial = user?.fullName.isNotEmpty == true ? user!.fullName[0].toUpperCase() : 'U';
@@ -95,7 +96,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            await ref.read(walletSyncServiceProvider).syncBalance();
+            await ref.read(autoSyncServiceProvider).forceSync();
             ref.read(lastSyncProvider.notifier).updateLastSync();
           },
           child: CustomScrollView(
@@ -115,6 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           balance?.hopCount ?? 0,
                           balance?.maxHop ?? 3,
                           isOnline,
+                          lastSync,
                         ),
                         loading: () => const CircularProgressIndicator(),
                         error: (error, stack) => Text('Error: $error'),
@@ -263,7 +265,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildWalletCard(int amountCent, int reservedCent, int hopCount, int maxHop, bool isOnline) {
+  Widget _buildWalletCard(int amountCent, int reservedCent, int hopCount, int maxHop, bool isOnline, DateTime? lastSync) {
     // Basic formatting logic
     final availableAmount = (amountCent - reservedCent) / 100;
 
@@ -486,7 +488,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               Icon(Icons.access_time_rounded, color: Colors.white54, size: 14),
               const SizedBox(width: 6),
               Text(
-                _lastSyncText,
+                _lastSyncText(lastSync),
                 style: TextStyle(
                   color: Colors.white54,
                   fontSize: 11,

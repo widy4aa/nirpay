@@ -47,16 +47,18 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, AuthTokens>> login(
     String email,
-    String password,
-  ) async {
+    String password, {
+    String? deviceId,
+  }) async {
     try {
       _logger.d('[Auth] Logging in: $email');
-      final data = await _remoteDatasource.login(email, password);
+      final data = await _remoteDatasource.login(email, password, deviceId: deviceId);
       final userModel = UserModel.fromJson(data.user);
       final tokens = AuthTokens(
         accessToken: data.tokens['accessToken'],
         refreshToken: data.tokens['refreshToken'],
         user: userModel.toEntity(),
+        deviceChanged: data.deviceChanged,
       );
       return Right(tokens);
     } on DioException catch (e) {

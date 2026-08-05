@@ -72,11 +72,13 @@ class AuthTokens {
   final String accessToken;
   final String refreshToken;
   final User user;
+  final bool deviceChanged;
 
   AuthTokens({
     required this.accessToken,
     required this.refreshToken,
     required this.user,
+    this.deviceChanged = false,
   });
 }
 
@@ -84,8 +86,9 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> register(RegisterParams params);
   Future<Either<Failure, AuthTokens>> login(
     String email,
-    String password,
-  );
+    String password, {
+    String? deviceId,
+  });
   Future<Either<Failure, AuthTokens>> verifyPin(
     String pin,
     String refreshToken,

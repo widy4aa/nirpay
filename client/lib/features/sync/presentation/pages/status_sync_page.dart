@@ -9,6 +9,7 @@ import '../../../../core/database/app_database.dart';
 import '../../../../features/wallet/presentation/providers/wallet_balance_provider.dart';
 import '../../../../features/transaction/presentation/providers/transaction_provider.dart';
 import '../../../../features/wallet/data/services/wallet_sync_service.dart';
+import '../../../../core/services/auto_sync_service.dart';
 import '../providers/last_sync_provider.dart';
 
 class StatusSyncPage extends ConsumerStatefulWidget {
@@ -27,7 +28,7 @@ class _StatusSyncPageState extends ConsumerState<StatusSyncPage> {
     setState(() => _isSyncing = true);
 
     try {
-      await ref.read(walletSyncServiceProvider).syncBalance();
+      await ref.read(autoSyncServiceProvider).forceSync();
       ref.read(lastSyncProvider.notifier).updateLastSync();
       if (mounted) {
         setState(() => _lastSyncTime = DateTime.now());

@@ -1,26 +1,30 @@
 version: '3.8'
 
 services:
+  # ─── PostgreSQL Database ───
   postgres:
-    image: postgres:16-alpine
+    image: docker.io/postgres:16-alpine
     container_name: nirpay-postgres
     restart: unless-stopped
     ports:
-      - '5432:5432'
+      - '${DB_PORT:-5432}:5432'
     environment:
-      POSTGRES_USER: nirpay
-      POSTGRES_PASSWORD: nirpay123
-      POSTGRES_DB: nirpay
+      POSTGRES_USER: ${DB_USERNAME:-nirpay}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nirpay123}
+      POSTGRES_DB: ${DB_DATABASE:-nirpay}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U nirpay -d nirpay']
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-nirpay} -d ${DB_DATABASE:-nirpay}']
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - nirpay-network
 
+  # ─── Redis (optional, for caching/sessions) ───
   redis:
-    image: redis:7-alpine
+    image: docker.io/redis:7-alpine
     container_name: nirpay-redis
     restart: unless-stopped
     ports:
@@ -32,53 +36,97 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - nirpay-network
 
+  # ─── Mailpit (dev email testing) ───
   mailpit:
-    image: axllent/mailpit
+    image: docker.io/axllent/mailpit
     container_name: nirpay-mailpit
     restart: unless-stopped
     ports:
-      - '1025:1025' # SMTP
-      - '8025:8025' # Web UI
+      - '1025:1025'  # SMTP
+      - '8025:8025'  # Web UI
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATABASE: /tmp/mailpit.db
     volumes:
       - mailpit_data:/tmp
+    networks:
+      - nirpay-network
 
+  # ─── Laravel Backend API ───
   backend:
     build:
-      context: ./backend-laravel
+      context: ./backend
       dockerfile: Dockerfile
     container_name: nirpay-backend
     restart: unless-stopped
     ports:
-      - '3001:8000'
+      - '${BACKEND_PORT:-3001}:8000'
     environment:
-      - APP_ENV=local
-      - APP_DEBUG=true
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=nirpay
-      - DB_USERNAME=nirpay
-      - DB_PASSWORD=nirpay123
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - MAIL_MAILER=smtp
-      - MAIL_HOST=mailpit
-      - MAIL_PORT=1025
+      APP_NAME: NirPay
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: http://localhost:${BACKEND_PORT:-3001}
+
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-nirpay}
+      DB_USERNAME: ${DB_USERNAME:-nirpay}
+      DB_PASSWORD: ${DB_PASSWORD:-nirpay123}
+
+      JWT_SECRET: ${JWT_SECRET:-nirpay-jwt-secret-change-me}
+      JWT_TTL: ${JWT_TTL:-15}
+      JWT_REFRESH_TTL: ${JWT_REFRESH_TTL:-43200}
+
+      FCM_SERVER_KEY: ${FCM_SERVER_KEY:-}
+
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     volumes:
-      - ./backend-laravel:/var/www/html
+      - ./backend:/var/www/html
       - vendor_data:/var/www/html/vendor
+    networks:
+      - nirpay-network
+
+  # ─── Next.js Admin Dashboard ───
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: nirpay-dashboard
+    restart: unless-stopped
+    ports:
+      - '${DASHBOARD_PORT:-3000}:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+      NEXTAUTH_URL: http://localhost:${DASHBOARD_PORT:-3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-nirpay-dashboard-secret-change-me}
+    depends_on:
+      - backend
+    networks:
+      - nirpay-network
 
 volumes:
   postgres_data:
+    driver: local
   redis_data:
+    driver: local
   mailpit_data:
+    driver: local
   vendor_data:
+    driver: local
+
+networks:
+  nirpay-network:
+    driver: bridge

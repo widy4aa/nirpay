@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Wallet\SyncController;
 use App\Http\Controllers\Api\Wallet\TopUpController;
 use App\Http\Controllers\Api\Wallet\WithdrawController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\StatsController;
 use App\Http\Controllers\Api\Admin\KycController;
@@ -50,6 +51,9 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'update']);
     Route::post('/profile/change-pin', [ProfileController::class, 'changePin']);
     Route::post('/profile/photo', [UploadController::class, 'profilePhoto']);
+
+    // Notification Routes
+    Route::post('/notification/fcm-token', [NotificationController::class, 'saveFcmToken']);
 
     // Wallet Routes
     Route::prefix('wallet')->group(function () {

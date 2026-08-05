@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM docker.io/php:8.4-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -11,23 +11,30 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     libzip-dev \
-    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd zip \
+    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy dependency files first (for better caching)
+COPY composer.json composer.lock ./
+
+# Install dependencies (ignore platform req for flexibility)
+RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
+
 # Copy application files
 COPY . .
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Run post-autoload-dump scripts
+RUN composer dump-autoload --optimize
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Expose port
 EXPOSE 8000

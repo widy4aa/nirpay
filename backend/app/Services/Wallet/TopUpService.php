@@ -5,6 +5,7 @@ namespace App\Services\Wallet;
 use App\Models\User;
 use App\Models\WalletBalance;
 use App\Models\Transaction;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -84,6 +85,26 @@ class TopUpService
 
         Log::info("[TopUp] Approved: {$txId}, amount: {$tx->amount_cent}");
 
+        // Kirim notifikasi ke user
+        try {
+            $user = User::find($tx->user_id);
+            if ($user) {
+                $amountRp = 'Rp ' . number_format($tx->amount_cent / 100, 0, ',', '.');
+                app(NotificationService::class)->sendToUser(
+                    $user,
+                    'Top Up Disetujui ✅',
+                    "Top up sebesar {$amountRp} telah disetujui dan saldo Anda telah bertambah.",
+                    [
+                        'type' => 'topup_approved',
+                        'txId' => $txId,
+                        'amountCent' => (string) $tx->amount_cent,
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            Log::warning("[TopUp] Failed to send notification: {$e->getMessage()}");
+        }
+
         return [
             'txId' => $txId,
             'status' => 'SYNCED',
@@ -108,6 +129,30 @@ class TopUpService
         ]);
 
         Log::info("[TopUp] Rejected: {$txId}, reason: {$reason}");
+
+        // Kirim notifikasi ke user
+        try {
+            $user = User::find($tx->user_id);
+            if ($user) {
+                $amountRp = 'Rp ' . number_format($tx->amount_cent / 100, 0, ',', '.');
+                $notifBody = "Top up sebesar {$amountRp} ditolak.";
+                if ($reason) {
+                    $notifBody .= " Alasan: {$reason}";
+                }
+                app(NotificationService::class)->sendToUser(
+                    $user,
+                    'Top Up Ditolak ❌',
+                    $notifBody,
+                    [
+                        'type' => 'topup_rejected',
+                        'txId' => $txId,
+                        'reason' => $reason,
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            Log::warning("[TopUp] Failed to send notification: {$e->getMessage()}");
+        }
 
         return [
             'txId' => $txId,

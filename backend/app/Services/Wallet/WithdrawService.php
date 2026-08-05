@@ -5,6 +5,7 @@ namespace App\Services\Wallet;
 use App\Models\User;
 use App\Models\WalletBalance;
 use App\Models\Transaction;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -108,6 +109,27 @@ class WithdrawService
 
         Log::info("[Withdraw] Approved: {$txId}, amount: {$tx->amount_cent}");
 
+        // Kirim notifikasi ke user
+        try {
+            $user = User::find($tx->user_id);
+            if ($user) {
+                $amountRp = 'Rp ' . number_format($tx->amount_cent / 100, 0, ',', '.');
+                $method = $tx->counterparty_name ?? '-';
+                app(NotificationService::class)->sendToUser(
+                    $user,
+                    'Withdraw Disetujui ✅',
+                    "Penarikan sebesar {$amountRp} ke {$method} telah disetujui dan sedang diproses.",
+                    [
+                        'type' => 'withdraw_approved',
+                        'txId' => $txId,
+                        'amountCent' => (string) $tx->amount_cent,
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            Log::warning("[Withdraw] Failed to send notification: {$e->getMessage()}");
+        }
+
         return [
             'txId' => $txId,
             'status' => 'SYNCED',
@@ -141,6 +163,31 @@ class WithdrawService
         });
 
         Log::info("[Withdraw] Rejected: {$txId}, reason: {$reason}");
+
+        // Kirim notifikasi ke user
+        try {
+            $user = User::find($tx->user_id);
+            if ($user) {
+                $amountRp = 'Rp ' . number_format($tx->amount_cent / 100, 0, ',', '.');
+                $method = $tx->counterparty_name ?? '-';
+                $notifBody = "Penarikan sebesar {$amountRp} ke {$method} ditolak. Saldo dikembalikan.";
+                if ($reason) {
+                    $notifBody .= " Alasan: {$reason}";
+                }
+                app(NotificationService::class)->sendToUser(
+                    $user,
+                    'Withdraw Ditolak ❌',
+                    $notifBody,
+                    [
+                        'type' => 'withdraw_rejected',
+                        'txId' => $txId,
+                        'reason' => $reason,
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            Log::warning("[Withdraw] Failed to send notification: {$e->getMessage()}");
+        }
 
         return [
             'txId' => $txId,

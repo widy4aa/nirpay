@@ -46,13 +46,18 @@ class AuthRemoteDatasource {
     return response.data['data'];
   }
 
-  Future<({Map<String, dynamic> tokens, Map<String, dynamic> user})> login(
+  Future<({Map<String, dynamic> tokens, Map<String, dynamic> user, bool deviceChanged})> login(
     String email,
-    String password,
-  ) async {
+    String password, {
+    String? deviceId,
+  }) async {
     final response = await _dio.post(
       '/auth/login',
-      data: {'email': email, 'password': password},
+      data: {
+        'email': email,
+        'password': password,
+        if (deviceId != null) 'deviceId': deviceId,
+      },
     );
     final data = response.data['data'];
     return (
@@ -61,6 +66,7 @@ class AuthRemoteDatasource {
         'refreshToken': data['refreshToken'],
       },
       user: data['user'] as Map<String, dynamic>,
+      deviceChanged: (data['deviceChanged'] as bool?) ?? false,
     );
   }
 
