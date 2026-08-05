@@ -1,5 +1,8 @@
-# Nirpay — Offline CBDC Wallet
+<p align="center">
+  <img src="./dashboard/public/logo.png" alt="Nirpay Logo" width="150"/>
+</p>
 
+# Nirpay — Offline CBDC Wallet
 **Nirpay** adalah sebuah sistem dompet digital (*digital wallet*) inovatif yang dirancang khusus untuk mendukung penggunaan **CBDC (Central Bank Digital Currency)**. Keunggulan utama dari Nirpay adalah kemampuannya untuk memfasilitasi transaksi pembayaran antar pengguna secara *offline* (tanpa koneksi internet) menggunakan teknologi **NFC** dan **Bluetooth**.
 
 Sistem ini didesain untuk daerah dengan konektivitas rendah atau saat terjadi gangguan jaringan, memastikan transaksi dapat terus berjalan dengan aman dan nantinya akan direkonsiliasi secara otomatis ke server pusat saat perangkat kembali *online*.
@@ -31,6 +34,32 @@ Proyek ini adalah *monorepo* yang terdiri dari 3 sistem utama yang saling terhub
 | **Dashboard** | Next.js, React, Tailwind CSS |
 | **Keamanan** | AES-256, Ed25519, Argon2 |
 | **Konektivitas** | NFC (HCE), Bluetooth |
+
+## 👥 Akun Dummy (Testing)
+
+Untuk mempermudah pengujian aplikasi, kamu bisa menggunakan akun *dummy* berikut untuk masuk ke dalam aplikasi maupun dashboard admin:
+
+### Login di App (Mobile)
+| Field | User 1 | User 2 |
+|---|---|---|
+| **Email** | `user1@gmail.com` | `user2@gmail.com` |
+| **Password** | `password` | `password` |
+| **PIN** | `123456` | `123456` |
+| **Username** | `user1` | `user2` |
+| **Nama Lengkap** | User Satu | User Dua |
+| **No. Telp** | 081111111111 | 082222222222 |
+| **NIK** | 3201234567890001 | 3201234567890002 |
+| **Gender** | MALE | FEMALE |
+| **KYC Status** | APPROVED | APPROVED |
+| **Saldo** | Rp 100.000 | Rp 100.000 |
+| **Lokasi** | Jakarta Selatan, DKI | Bandung, Jawa Barat |
+
+### Login di Dashboard (Web Admin)
+| Field | Admin 1 | Admin 2 |
+|---|---|---|
+| **Email** | `admin@nirpay.com` | `admin2@nirpay.com` |
+| **Password** | `Admin123` | `Admin123` |
+| **Role** | SUPER_ADMIN | ADMIN |
 
 ## 🚀 Panduan Instalasi & Menjalankan
 
