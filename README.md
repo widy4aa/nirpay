@@ -21,7 +21,7 @@ Proyek ini adalah *monorepo* yang terdiri dari 3 sistem utama yang saling terhub
 - 📱 **`client/` (Mobile App)** 
   Aplikasi pengguna akhir yang dibangun menggunakan **Flutter**. Berfungsi sebagai dompet digital offline dengan penyimpanan lokal terenkripsi.
 - ⚙️ **`backend/` (API & Core Ledger)**
-  Server pusat yang dibangun dengan **NestJS (Node.js)**. Bertugas sebagai *mock bank* CBDC, menangani proses sinkronisasi, validasi kriptografi, dan penyelesaian akhir (*settlement*).
+  Server pusat yang dibangun dengan **PHP (Laravel)**. Bertugas sebagai *mock bank* CBDC, menangani proses sinkronisasi, validasi kriptografi, dan penyelesaian akhir (*settlement*).
 - 🖥️ **`dashboard/` (Admin Panel)**
   Web administrasi yang dibangun dengan **Next.js**. Digunakan oleh staf/admin untuk memantau lalu lintas transaksi, verifikasi pengguna (KYC), dan mengawasi kesehatan *ledger*.
 
@@ -30,7 +30,7 @@ Proyek ini adalah *monorepo* yang terdiri dari 3 sistem utama yang saling terhub
 | Komponen | Teknologi Pendukung |
 |---|---|
 | **Client** | Flutter, Dart, SQLite (+ SQLCipher), Drift ORM |
-| **Backend** | Node.js (NestJS), PostgreSQL, Prisma ORM, Redis |
+| **Backend** | PHP (Laravel), PostgreSQL / SQLite, Redis |
 | **Dashboard** | Next.js, React, Tailwind CSS |
 | **Keamanan** | AES-256, Ed25519, Argon2 |
 | **Konektivitas** | NFC (HCE), Bluetooth |
@@ -74,14 +74,15 @@ flutter run
 ```
 
 ### 2. Backend (API Server)
-Pastikan Node.js, npm, dan PostgreSQL sudah tersedia.
+Pastikan PHP, Composer, dan sistem database sudah tersedia.
 ```bash
 cd backend
-npm install
-# Sesuaikan file .env untuk koneksi database
-npx prisma generate
-npx prisma db push
-npm run start:dev
+composer install
+cp .env.example .env
+php artisan key:generate
+# Sesuaikan konfigurasi database di file .env jika perlu
+php artisan migrate
+php artisan serve
 ```
 
 ### 3. Dashboard (Admin Web)
