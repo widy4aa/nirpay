@@ -40,6 +40,7 @@ class User extends Authenticatable implements JWTSubject
         'rw',
         'ktp_photo_url',
         'profile_photo_url',
+        'device_id',
         'gender',
         'birth_date',
         'is_active',

@@ -16,7 +16,7 @@ class AppConfig {
       case AppEnvironment.dev:
         return const AppConfig(
           environment: AppEnvironment.dev,
-          apiBaseUrl: 'http://10.189.15.215:3001/api',
+          apiBaseUrl: 'http://10.53.173.215:3001/api',
           enableNetworkLogs: true,
         );
       case AppEnvironment.staging:

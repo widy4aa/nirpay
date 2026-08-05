@@ -33,6 +33,7 @@ class RegisterRequest extends FormRequest
             'kycFaceUrl' => ['nullable', 'string', 'max:500'],
             'gender' => ['nullable', 'in:MALE,FEMALE'],
             'birthDate' => ['nullable', 'date'],
+            'deviceId' => ['nullable', 'string', 'max:255'],
         ];
     }
 

@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('rw')->nullable();
             $table->string('ktp_photo_url')->nullable();
             $table->string('profile_photo_url')->nullable();
+            $table->string('device_id')->nullable();
             $table->string('gender')->nullable();
             $table->date('birth_date')->nullable();
             $table->boolean('is_active')->default(true);

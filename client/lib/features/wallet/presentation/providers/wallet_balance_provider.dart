@@ -13,6 +13,7 @@ final walletBalanceProvider = StreamProvider<WalletBalanceEntry?>((ref) {
   }
 
   return (db.select(db.walletBalances)
-        ..where((w) => w.userId.equals(currentUser.id)))
+        ..where((w) => w.userId.equals(currentUser.id))
+        ..limit(1))
       .watchSingleOrNull();
 });

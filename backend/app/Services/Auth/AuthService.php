@@ -43,6 +43,7 @@ class AuthService
                 'rw' => $data['rw'] ?? null,
                 'ktp_photo_url' => $data['ktpPhotoUrl'] ?? null,
                 'kyc_face_url' => $data['kycFaceUrl'] ?? null,
+                'device_id' => $data['deviceId'] ?? null,
                 'gender' => $data['gender'] ?? null,
                 'birth_date' => isset($data['birthDate']) ? $data['birthDate'] : null,
             ]);
@@ -112,6 +113,25 @@ class AuthService
             throw new \Exception('KYC_PENDING');
         }
 
+        // ─── Device Binding Check ───
+        $deviceId = $data['deviceId'] ?? null;
+        $deviceChanged = false;
+
+        if ($deviceId) {
+            if ($user->device_id && $user->device_id !== $deviceId) {
+                // Device berbeda — revoke semua session lama
+                DeviceSession::where('user_id', $user->id)
+                    ->where('is_revoked', false)
+                    ->update(['is_revoked' => true]);
+
+                $deviceChanged = true;
+                Log::info("[Auth] Device changed for user {$user->id}: {$user->device_id} → {$deviceId}");
+            }
+
+            // Update device_id ke device baru
+            $user->update(['device_id' => $deviceId]);
+        }
+
         // Reset failed login count on success
         $user->update([
             'failed_login_count' => 0,
@@ -122,11 +142,12 @@ class AuthService
         // Generate tokens
         $tokens = $this->tokenService->generateTokens($user);
 
-        Log::info("[Auth] Login successful: {$user->id}");
+        Log::info("[Auth] Login successful: {$user->id}" . ($deviceChanged ? ' (device changed)' : ''));
 
         return [
             'accessToken' => $tokens['accessToken'],
             'refreshToken' => $tokens['refreshToken'],
+            'deviceChanged' => $deviceChanged,
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,

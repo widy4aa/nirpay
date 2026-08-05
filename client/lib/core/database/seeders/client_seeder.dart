@@ -14,88 +14,84 @@ class ClientSeeder {
 
   ClientSeeder(this._userLocal, this._storage, this._db);
 
-  // ─── Account 1: Dio ───
+  // ─── Account 1: User1 ───
   static const _user1 = User(
-    id: '008357ea-83ac-45ee-85f8-7e4d49a15440',
-    email: 'dio34678@gmail.com',
-    fullName: 'Dio Pratama',
-    username: 'dio34678',
+    id: 'user1-0000-0000-0000-000000000001',
+    email: 'user1@gmail.com',
+    fullName: 'User Satu',
+    username: 'user1',
     role: 'USER',
-    phone: '081234567893',
+    phone: '081111111111',
     kycStatus: 'APPROVED',
-    nik: '3201234567890004',
+    nik: '3201234567890001',
     province: 'DKI Jakarta',
     city: 'Jakarta Selatan',
     district: 'Kebayoran Baru',
     village: 'Gandaria Utara',
     postalCode: '12140',
-    rt: '003',
-    rw: '005',
-    gender: 'MALE',
-  );
-
-  // ─── Account 2: Drivedio ───
-  static const _user2 = User(
-    id: '6f459645-398c-41ee-a6fb-51c691e4f5e1',
-    email: 'drivedio34@gmail.com',
-    fullName: 'Drive Dio',
-    username: 'drivedio34',
-    role: 'USER',
-    phone: '081234567894',
-    kycStatus: 'APPROVED',
-    nik: '3201234567890005',
-    province: 'DKI Jakarta',
-    city: 'Jakarta Timur',
-    district: 'Cakung',
-    village: 'Penggilingan',
-    postalCode: '13940',
     rt: '001',
     rw: '002',
     gender: 'MALE',
   );
 
-  // Saldo awal dari transaksi TOPUP (konsisten dengan backend)
-  static const _topupAmount = 5000000; // Rp 50.000 (50000 cent)
+  // ─── Account 2: User2 ───
+  static const _user2 = User(
+    id: 'user2-0000-0000-0000-000000000002',
+    email: 'user2@gmail.com',
+    fullName: 'User Dua',
+    username: 'user2',
+    role: 'USER',
+    phone: '082222222222',
+    kycStatus: 'APPROVED',
+    nik: '3201234567890002',
+    province: 'Jawa Barat',
+    city: 'Bandung',
+    district: 'Coblong',
+    village: 'Dago',
+    postalCode: '40135',
+    rt: '003',
+    rw: '005',
+    gender: 'FEMALE',
+  );
 
-  /// Seed 2 dummy accounts + wallet balances + transactions
-  Future<void> seedDummyUser() async {
-    // ── 1. Seed Users ──
+  // Saldo awal: Rp 100.000 (10000000 cent)
+  static const _initialBalance = 10000000;
+
+  /// Seed data dummy untuk development.
+  /// TIDAK menyimpan token atau PIN hash — user WAJIB login via API.
+  Future<void> seedDummyData() async {
+    // ── 1. Seed Users (hanya jika belum ada) ──
     final existingUser = await _userLocal.getActiveUser();
     if (existingUser == null) {
       await _userLocal.saveUser(_user1);
       await _userLocal.saveUser(_user2);
-      // Token TIDAK di-set — user harus login via API untuk dapat JWT asli
     }
 
-    // PIN: 123123 (6 digit) — bcrypt hash
-    // Password untuk login online: 12312312
-    await _storage.write(
-      'saved_pin_hash',
-      r'$2b$12$LhCnt25NDJItt28NqrRjpea2H5iDJs3ViOzPxk2kmxahuZ3zOUGm6',
-    );
-
-    // ── 2. Seed Wallet Balances (dari transaksi TOPUP, konsisten dengan backend) ──
-    final existingBalance = await _db.getWalletBalance(_user1.id);
-    if (existingBalance == null) {
-      // Dio: Rp 50.000 (dari TOPUP)
+    // ── 2. Seed Wallet Balances (match backend) ──
+    final existingBalance1 = await _db.getWalletBalance(_user1.id);
+    if (existingBalance1 == null) {
+      // User1: Rp 100.000
       await _db.upsertWalletBalance(
         WalletBalancesCompanion.insert(
-          id: 'wallet-dio',
+          id: 'wallet-user1',
           userId: _user1.id,
-          amountCent: const Value(_topupAmount),
+          amountCent: const Value(_initialBalance),
           reservedCent: const Value(0),
           hopCount: const Value(0),
           maxHop: const Value(3),
           currency: const Value('IDR'),
         ),
       );
+    }
 
-      // Drivedio: Rp 50.000 (dari TOPUP)
+    final existingBalance2 = await _db.getWalletBalance(_user2.id);
+    if (existingBalance2 == null) {
+      // User2: Rp 100.000
       await _db.upsertWalletBalance(
         WalletBalancesCompanion.insert(
-          id: 'wallet-drivedio',
+          id: 'wallet-user2',
           userId: _user2.id,
-          amountCent: const Value(_topupAmount),
+          amountCent: const Value(_initialBalance),
           reservedCent: const Value(0),
           hopCount: const Value(0),
           maxHop: const Value(3),
@@ -107,32 +103,35 @@ class ClientSeeder {
     // ── 3. Seed Transactions (TOPUP awal) ──
     final txCount = await _db.getTransactionCount();
     if (txCount == 0) {
-      // Dio: TOPUP Rp 50.000
+      // User1: TOPUP Rp 100.000
       await _db.insertTransaction(
         TransactionsCompanion.insert(
-          id: 'tx-topup-dio',
-          txId: 'tx-topup-dio',
+          id: 'tx-topup-user1',
+          txId: 'tx-topup-user1',
           direction: 'CREDIT',
           txType: 'TOPUP',
-          amountCent: _topupAmount,
+          amountCent: _initialBalance,
           syncStatus: const Value('SYNCED'),
           createdAt: Value(DateTime.now().subtract(const Duration(days: 3))),
         ),
       );
 
-      // Drivedio: TOPUP Rp 50.000
+      // User2: TOPUP Rp 100.000
       await _db.insertTransaction(
         TransactionsCompanion.insert(
-          id: 'tx-topup-drivedio',
-          txId: 'tx-topup-drivedio',
+          id: 'tx-topup-user2',
+          txId: 'tx-topup-user2',
           direction: 'CREDIT',
           txType: 'TOPUP',
-          amountCent: _topupAmount,
+          amountCent: _initialBalance,
           syncStatus: const Value('SYNCED'),
           createdAt: Value(DateTime.now().subtract(const Duration(days: 3))),
         ),
       );
     }
+
+    // ── TIDAK menyimpan token atau PIN hash ──
+    // User WAJIB login via API untuk mendapatkan JWT token
   }
 }
 

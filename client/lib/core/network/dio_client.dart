@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 import '../config/app_config.dart';
+import '../config/backend_resolver.dart';
 import '../providers/app_providers.dart';
 import '../services/app_logger.dart';
 import '../services/secure_storage_service.dart';
@@ -17,13 +18,13 @@ class DioClient {
   final Dio dio;
 
   factory DioClient.create(
-    AppConfig config,
+    String baseUrl,
     Logger logger,
     SecureStorageService storage,
   ) {
     final dio = Dio(
       BaseOptions(
-        baseUrl: config.apiBaseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),
@@ -46,10 +47,30 @@ class DioClient {
   }
 }
 
+/// Provider untuk resolve backend URL (async)
+final backendUrlProvider = FutureProvider<String>((ref) async {
+  return BackendResolver.resolve();
+});
+
+/// Provider untuk Dio client (depends on backendUrlProvider)
 final dioProvider = Provider<Dio>((ref) {
-  final config = ref.watch(appConfigProvider);
   final logger = ref.watch(appLoggerProvider);
   final storage = ref.watch(secureStorageProvider);
 
-  return DioClient.create(config, logger, storage).dio;
+  // Watch backend URL resolution
+  final backendUrlAsync = ref.watch(backendUrlProvider);
+
+  return backendUrlAsync.when(
+    data: (baseUrl) => DioClient.create(baseUrl, logger, storage).dio,
+    loading: () {
+      // Fallback: gunakan config default sambil resolve
+      final config = ref.read(appConfigProvider);
+      return DioClient.create(config.apiBaseUrl, logger, storage).dio;
+    },
+    error: (_, __) {
+      // Fallback: gunakan config default
+      final config = ref.read(appConfigProvider);
+      return DioClient.create(config.apiBaseUrl, logger, storage).dio;
+    },
+  );
 });
