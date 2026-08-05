@@ -7,12 +7,21 @@
 
 Sistem ini didesain untuk daerah dengan konektivitas rendah atau saat terjadi gangguan jaringan, memastikan transaksi dapat terus berjalan dengan aman dan nantinya akan direkonsiliasi secara otomatis ke server pusat saat perangkat kembali *online*.
 
-## ✨ Fitur Utama
+## ✨ Status Fitur (Roadmap)
 
-- **Offline P2P Transfer**: Kirim dan terima uang langsung antar pengguna (*peer-to-peer*) tanpa perlu akses internet melalui NFC (Host Card Emulation) dan komunikasi Bluetooth.
-- **Sinkronisasi Otomatis (Reconciliation)**: Transaksi offline disimpan dengan aman di perangkat lokal dan akan disinkronisasi ke server (Global Ledger) ketika koneksi internet kembali tersedia.
-- **Pencegahan Double-Spend**: Sistem backend yang handal untuk mendeteksi, menangani, dan melakukan *rollback* jika terdeteksi anomali atau percobaan pembelanjaan ganda (*double-spending*).
-- **Keamanan Kriptografi Tingkat Tinggi**: Menggunakan algoritma *Ed25519* untuk tanda tangan digital transaksi offline dan enkripsi *AES-256* (memanfaatkan *Android Keystore* / TEE) untuk mengamankan data dompet di perangkat.
+### ✅ Saat Ini Sudah Tersedia (Available Now)
+- **Autentikasi & Verifikasi (KYC)**: Pendaftaran pengguna baru lengkap dengan tahapan KYC dan login yang aman.
+- **Offline P2P Transfer (NFC)**: Kirim dan terima uang langsung antar pengguna (*peer-to-peer*) tanpa internet menggunakan NFC (Host Card Emulation).
+- **Manajemen Wallet**: Melihat saldo, riwayat transaksi lengkap, top-up, dan withdraw.
+- **Sinkronisasi Otomatis (Reconciliation)**: Transaksi offline disimpan dengan aman di perangkat lokal dan disinkronkan ke server secara otomatis saat perangkat kembali *online*.
+- **Pencegahan Double-Spend**: Backend mendeteksi dan menangani anomali atau upaya pembelanjaan ganda.
+- **Dashboard Admin**: Panel web untuk admin memantau pengguna dan data KYC.
+
+### 🚧 Fitur Mendatang (Upcoming / Planned)
+- **Offline P2P Transfer (Bluetooth)**: Dukungan transfer tanpa internet alternatif bagi perangkat yang tidak memiliki NFC.
+- **Keamanan Biometrik**: Dukungan login dan konfirmasi transaksi menggunakan Fingerprint / Face ID.
+- **Manajemen Sengketa (Dispute/Fraud)**: Sistem pelaporan jika terjadi kegagalan rekonsiliasi atau transaksi mencurigakan.
+- **Sistem Settlement Lanjutan**: Integrasi *Mock Bank* yang lebih kompleks untuk proses kliring transaksi.
 
 ## 🏗️ Struktur Proyek (Monorepo)
 
