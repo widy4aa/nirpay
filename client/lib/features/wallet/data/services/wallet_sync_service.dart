@@ -73,8 +73,16 @@ class WalletSyncService {
         for (final tx in rejected) {
           final txId = tx['txId'] as String;
           final reason = tx['reason'] as String? ?? 'UNKNOWN';
-          await _markTransactionRejected(txId, reason);
-          _logger.d('[Sync] Marked $txId as REJECTED: $reason');
+
+          if (reason == 'DUPLICATE_TX') {
+            // DUPLICATE_TX = transaksi sudah ada di server (dari device lain)
+            // Anggap sebagai SYNCED
+            await _markTransactionSynced(txId);
+            _logger.d('[Sync] Marked $txId as SYNCED (duplicate — already on server)');
+          } else {
+            await _markTransactionRejected(txId, reason);
+            _logger.d('[Sync] Marked $txId as REJECTED: $reason');
+          }
         }
 
         serverBalance = result['balance'] as Map<String, dynamic>;
@@ -84,17 +92,38 @@ class WalletSyncService {
         serverBalance = await _remoteDatasource.getBalance();
       }
 
-      // 4. Update local balance dari server
+      // 4. Hitung balance dengan mempertimbangkan transaksi PENDING lokal
       final existingBalance = await _db.getWalletBalance(userId);
       final maxHop = _parseInt(serverBalance['maxHop']) > 0
           ? _parseInt(serverBalance['maxHop'])
           : existingBalance?.maxHop ?? 3;
 
+      // Ambil transaksi PENDING yang masih ada di local (belum di-sync)
+      final remainingPending = await (_db.select(_db.transactions)
+            ..where((t) => t.syncStatus.equals('PENDING')))
+          .get();
+
+      // Hitung adjustment dari transaksi PENDING
+      int pendingAdjustment = 0;
+      for (final tx in remainingPending) {
+        if (tx.direction == 'DEBIT') {
+          pendingAdjustment -= tx.amountCent; // Uang keluar
+        } else if (tx.direction == 'CREDIT') {
+          pendingAdjustment += tx.amountCent; // Uang masuk
+        }
+      }
+
+      // Balance = server balance + adjustment PENDING
+      final serverAmount = _parseInt(serverBalance['amountCent']);
+      final adjustedAmount = serverAmount + pendingAdjustment;
+
+      _logger.d('[Sync] Server balance: $serverAmount, pending adjustment: $pendingAdjustment, final: $adjustedAmount');
+
       await _db.into(_db.walletBalances).insertOnConflictUpdate(
         WalletBalancesCompanion(
           id: Value('wallet-$userId'),
           userId: Value(userId),
-          amountCent: Value(_parseInt(serverBalance['amountCent'])),
+          amountCent: Value(adjustedAmount < 0 ? 0 : adjustedAmount),
           reservedCent: Value(_parseInt(serverBalance['reservedCent'])),
           currency: Value(serverBalance['currency'] ?? 'IDR'),
           maxHop: Value(maxHop),

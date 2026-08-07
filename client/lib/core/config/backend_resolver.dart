@@ -5,8 +5,9 @@ import 'package:logger/logger.dart';
 /// Mencoba beberapa URL secara berurutan, gunakan yang pertama berhasil.
 class BackendResolver {
   static const List<String> _backendUrls = [
-    'http://10.161.163.215:3001/api',            // IP lokal (cepat)
-    'http://nirpay-backend.widy4aa.my.id/api',   // Domain (fallback)
+    'https://local.widy4aa.my.id/api',           // Domain utama (deployed)
+    'http://10.161.163.215:3001/api',            // IP lokal (fallback)
+    'http://nirpay-backend.widy4aa.my.id/api',   // Domain cadangan
   ];
 
   static String? _resolvedUrl;

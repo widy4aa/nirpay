@@ -16,7 +16,7 @@ class AppConfig {
       case AppEnvironment.dev:
         return const AppConfig(
           environment: AppEnvironment.dev,
-          apiBaseUrl: 'http://10.161.163.215:3001/api',
+          apiBaseUrl: 'https://local.widy4aa.my.id/api',
           enableNetworkLogs: true,
         );
       case AppEnvironment.staging:
